@@ -8,22 +8,23 @@ interface NavbarProps {}
 export const Navbar: React.FC<NavbarProps> = () => {
   const [sidebarHidden, setSidebarHidden] = useState(true);
 
-  const handleEscapePress = (e: KeyboardEvent) => {
-    console.log({ e });
-    if (e.key === "Escape" && !sidebarHidden) {
+  const handleKeyPress = (e: KeyboardEvent) => {
+    // close the sidebar using 'esc'
+    if (e.key === "Escape") {
       return setSidebarHidden(true);
     }
 
+    // toggle the sidebar using a keyboard shortcut
     if (e.key === "u" && e.altKey) {
       return setSidebarHidden((prev) => !prev);
     }
   };
 
   useEffect(() => {
-    document.addEventListener("keydown", handleEscapePress);
+    document.addEventListener("keydown", handleKeyPress);
 
     return () => {
-      document.removeEventListener("keypress", handleEscapePress);
+      document.removeEventListener("keypress", handleKeyPress);
     };
   }, []);
 
@@ -37,7 +38,7 @@ export const Navbar: React.FC<NavbarProps> = () => {
         <MenuIcon
           active={!sidebarHidden}
           onClick={() => setSidebarHidden((prev) => !prev)}
-          className="fixed -mt-2 -ml-2 transform -translate-x-full -translate-y-full w-fit left-full top-full"
+          className="fixed -mt-4 -ml-4 transform -translate-x-full -translate-y-full w-fit left-full top-full"
         />
       </nav>
     </>
