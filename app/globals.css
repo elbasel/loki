@@ -27,8 +27,23 @@
   }
 }
 
+@layer utilities {
+  .fadeIn {
+    animation: fadeIn 0.5s ease-in-out;
+  }
+}
+
 @layer components {
   .btn {
     @apply hover:bg-black hover:text-white active:animate-pulse active:scale-95 transition-all duration-200 font-[inherit] w-full px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 capitalize;
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
   }
 }

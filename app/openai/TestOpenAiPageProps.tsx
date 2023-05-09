@@ -2,6 +2,8 @@
 import { useEffect, useState, useTransition } from "react";
 import { getServerOpenAiKey, setServerOpenAiKey } from "./actions";
 import { Loader } from "@app/loader";
+import { AutoAnimate } from "@app/autoanimate";
+import { twMerge } from "tailwind-merge";
 interface TestOpenAiPageProps {}
 export const TestOpenAiPage: React.FC<TestOpenAiPageProps> = ({}) => {
   const [OpenAiKey, setOpenAiKey] = useState("");
@@ -11,9 +13,13 @@ export const TestOpenAiPage: React.FC<TestOpenAiPageProps> = ({}) => {
   useTransition();
 
   const handleSubmit = (formData: FormData) => {
+    setLoading(true);
     if (userPrompt) setServerOpenAiKey(userPrompt);
     const serverOpenAiKey = getServerOpenAiKey();
     setOpenAiKey(serverOpenAiKey);
+    setTimeout(() => {
+      setLoading(false);
+    }, 2000);
   };
 
   useEffect(() => {
@@ -40,14 +46,22 @@ export const TestOpenAiPage: React.FC<TestOpenAiPageProps> = ({}) => {
       <button className="btn" type="submit">
         submit
       </button>
-      <output className="flex items-center" name="result">
-        Your current Open Ai API Key:{" "}
-        {OpenAiKey ||
-          (loading ? (
+      <output
+        className="flex flex-wrap items-center overflow-hidden transition-all"
+        name="result"
+      >
+        <span className="shrink-0">Your current Open Ai API Key: </span>
+        <AutoAnimate className="flex items-center">
+          {!loading && OpenAiKey ? (
+            <span className={twMerge("mx-1 transition-all duration-700")}>
+              {OpenAiKey}
+            </span>
+          ) : loading ? (
             <Loader />
           ) : (
-            <span className="text-red-500">No Key Provided!</span>
-          ))}
+            <span className="mx-1 text-red-500">No Key Provided!</span>
+          )}
+        </AutoAnimate>
       </output>
     </form>
   );

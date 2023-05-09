@@ -2,11 +2,31 @@
 
 import MenuIcon from "@app/icons/MenuIcon";
 import { Sidebar } from "@app/navbar/sidebar";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface NavbarProps {}
 export const Navbar: React.FC<NavbarProps> = () => {
   const [sidebarHidden, setSidebarHidden] = useState(true);
+
+  const handleEscapePress = (e: KeyboardEvent) => {
+    console.log({ e });
+    if (e.key === "Escape" && !sidebarHidden) {
+      return setSidebarHidden(true);
+    }
+
+    if (e.key === "u" && e.altKey) {
+      return setSidebarHidden((prev) => !prev);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("keydown", handleEscapePress);
+
+    return () => {
+      document.removeEventListener("keypress", handleEscapePress);
+    };
+  }, []);
+
   return (
     <>
       <Sidebar className="z-10" hidden={sidebarHidden} />
@@ -17,7 +37,7 @@ export const Navbar: React.FC<NavbarProps> = () => {
         <MenuIcon
           active={!sidebarHidden}
           onClick={() => setSidebarHidden((prev) => !prev)}
-          className="fixed w-fit left-[84%] top-[87%]"
+          className="fixed -mt-2 -ml-2 transform -translate-x-full -translate-y-full w-fit left-full top-full"
         />
       </nav>
     </>
