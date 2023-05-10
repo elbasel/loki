@@ -6,6 +6,7 @@ export const getServerOpenAiKey = (): string => {
   if (!openAiKey) {
     throw new Error("OPENAI_API_KEY is not defined");
   }
+  console.log({ openAiKey });
   return openAiKey;
 };
 

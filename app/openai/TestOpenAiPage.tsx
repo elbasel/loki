@@ -1,16 +1,14 @@
 "use client";
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useState } from "react";
 import { getServerOpenAiKey, setServerOpenAiKey } from "./actions";
 import { Loader } from "@app/loader";
 import { AutoAnimate } from "@app/autoanimate";
 import { twMerge } from "tailwind-merge";
-interface TestOpenAiPageProps {}
-export const TestOpenAiPage: React.FC<TestOpenAiPageProps> = ({}) => {
+
+export const TestOpenAiPage: React.FC = () => {
   const [OpenAiKey, setOpenAiKey] = useState("");
   const [userPrompt, setUserPrompt] = useState("");
   const [loading, setLoading] = useState(true);
-
-  useTransition();
 
   const handleSubmit = (formData: FormData) => {
     setLoading(true);
@@ -19,7 +17,7 @@ export const TestOpenAiPage: React.FC<TestOpenAiPageProps> = ({}) => {
     setOpenAiKey(serverOpenAiKey);
     setTimeout(() => {
       setLoading(false);
-    }, 2000);
+    }, 1000);
   };
 
   useEffect(() => {
@@ -66,4 +64,3 @@ export const TestOpenAiPage: React.FC<TestOpenAiPageProps> = ({}) => {
     </form>
   );
 };
-export default TestOpenAiPage;

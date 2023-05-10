@@ -10,12 +10,12 @@ export const Navbar: React.FC<NavbarProps> = () => {
 
   const handleKeyPress = (e: KeyboardEvent) => {
     // close the sidebar using 'esc'
-    if (e.key === "Escape") {
+    if (e.key.toLowerCase() === "escape") {
       return setSidebarHidden(true);
     }
 
     // toggle the sidebar using a keyboard shortcut
-    if (e.key === "u" && e.altKey) {
+    if (e.key.toLowerCase() === "u" && e.altKey) {
       return setSidebarHidden((prev) => !prev);
     }
   };
@@ -31,7 +31,7 @@ export const Navbar: React.FC<NavbarProps> = () => {
   return (
     <>
       <Sidebar className="z-10" hidden={sidebarHidden} />
-      <nav className="relative z-50 flex justify-between px-4 py-2">
+      <nav className="relative z-50 flex justify-between">
         <div className={"transition-all " + (!sidebarHidden && "opacity-0")}>
           <h1>Loki</h1>
         </div>

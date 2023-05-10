@@ -1,13 +1,11 @@
-import { TestOpenAiPage } from "./TestOpenAiPageProps";
+import { TestOpenAiPage } from "./TestOpenAiPage";
 
-interface OpenAiPageProps {
-  children?: React.ReactNode;
-}
-const OpenAiPage: React.FC<OpenAiPageProps> = ({ children }) => {
+const OpenAiPage: React.FC = () => {
   return (
     <>
       <TestOpenAiPage />
     </>
   );
 };
+
 export default OpenAiPage;

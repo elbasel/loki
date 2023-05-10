@@ -12,7 +12,10 @@ export const MenuIcon: React.FC<MenuIconProps> = ({
 }) => {
   return (
     <div className={className}>
-      <button onClick={onClick} className={twMerge("relative group")}>
+      <button
+        onClick={onClick}
+        className={twMerge("relative group rounded-3xl")}
+      >
         <div
           className={twMerge(
             "relative flex overflow-hidden items-center justify-center rounded-full w-[50px] h-[50px] transform transition-all bg-slate-700 ring-0 ring-gray-300 hover:ring-8 ring-opacity-30 duration-200 shadow-md",
