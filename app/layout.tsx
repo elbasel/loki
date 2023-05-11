@@ -6,6 +6,7 @@ import { twMerge } from "tailwind-merge";
 import { MenuIcon } from "./icons";
 import { useEffect, useState } from "react";
 import { Sidebar } from "./navbar/sidebar";
+import { useWindowSize } from "usehooks-ts";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -16,6 +17,7 @@ export default function RootLayout({
 }) {
   const [sidebarHidden, setSidebarHidden] = useState(true);
   const [navbarHidden, setNavbarHidden] = useState(false);
+  const { width, height } = useWindowSize();
 
   const handleKeyPress = (e: KeyboardEvent) => {
     // close the sidebar using 'esc'
@@ -52,9 +54,10 @@ export default function RootLayout({
   return (
     <html lang="en" className="text-white bg-slate-900">
       <body
+        style={{ height, width }}
         className={twMerge(
           inter.className,
-          "px-4 min-h-[100dvh] flex flex-col py-2"
+          "px-4 overflow-hidden flex flex-col py-2"
         )}
       >
         <Navbar navbarHidden={navbarHidden} />
