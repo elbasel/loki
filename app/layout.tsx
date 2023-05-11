@@ -42,6 +42,7 @@ export default function RootLayout({
     }
   };
 
+  // console.log('test'')
   useEffect(() => {
     document.addEventListener("keydown", handleKeyPress);
     document.addEventListener("scroll", handleScroll);
