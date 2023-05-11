@@ -54,7 +54,7 @@ export default function RootLayout({
       <body
         className={twMerge(
           inter.className,
-          "px-4 h-[100dvh] flex flex-col py-2"
+          "px-4 min-h-[100dvh] flex flex-col py-2"
         )}
       >
         <Navbar navbarHidden={navbarHidden} />
