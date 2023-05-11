@@ -45,11 +45,11 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
         </button>
       </div>
       <output
-        className="flex flex-wrap items-center pt-6 overflow-hidden transition-all"
+        className="flex mt-6 max-h-[77vh] overflow-hidden transition-all"
         name={inputName}
       >
         {/* <span className="shrink-0">Your current Open Ai API Key: </span> */}
-        <AutoAnimate className="max-h-[77vh] overflow-y-auto scrollbar-thin flex flex-col-reverse gap-2 ChatWindow-ChatMessages">
+        <AutoAnimate className="flex flex-col-reverse gap-2 pt-2 overflow-y-auto scrollbar-thin ChatWindow-ChatMessages">
           {/* a chat message component */}
           {messages.map(({ message, author, id }) => (
             <Fragment key={id}>
