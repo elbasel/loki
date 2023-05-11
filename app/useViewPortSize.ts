@@ -5,9 +5,9 @@ export interface ViewportSize {
   height: number | undefined;
 }
 
-export function getViewableArea(): ViewportSize {
+export function getViewableArea(): ViewportSize | undefined {
   if (typeof window === "undefined") {
-    return { width: undefined, height: undefined };
+    return undefined;
   }
   const viewportWidth = window.innerWidth;
   const viewportHeight = window.innerHeight;
@@ -18,8 +18,10 @@ export function getViewableArea(): ViewportSize {
   return { width, height };
 }
 
-export const useGetViewableArea = (): ViewportSize => {
-  const [viewableArea, setViewableArea] = useState(getViewableArea());
+export const useViewportSize = (): ViewportSize | undefined => {
+  const [viewableArea, setViewableArea] = useState<ViewportSize | undefined>(
+    undefined
+  );
 
   useEffect(() => {
     const resizeObserver = new ResizeObserver((entries) => {

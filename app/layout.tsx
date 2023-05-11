@@ -6,7 +6,7 @@ import { twMerge } from "tailwind-merge";
 import { MenuIcon } from "./icons";
 import { useEffect, useState } from "react";
 import { Sidebar } from "./navbar/sidebar";
-import useWindowSize from "./useWindowSize";
+import { useViewportSize } from "./useViewPortSize";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,7 +17,8 @@ export default function RootLayout({
 }) {
   const [sidebarHidden, setSidebarHidden] = useState(true);
   const [navbarHidden, setNavbarHidden] = useState(false);
-  const { width, height } = useWindowSize();
+  // undefined on the Server, { width, height } on the client
+  const viewportSize = useViewportSize();
 
   const handleKeyPress = (e: KeyboardEvent) => {
     // close the sidebar using 'esc'
@@ -54,7 +55,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="text-white bg-slate-900">
       <body
-        style={height > 0 ? { height, width } : undefined}
+        style={viewportSize}
         className={twMerge(
           inter.className,
           "px-4 h-[100dvh] overflow-hidden flex flex-col py-2"
