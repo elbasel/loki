@@ -6,7 +6,11 @@ import { twMerge } from "tailwind-merge";
 import { MenuIcon } from "./icons";
 import { useEffect, useState } from "react";
 import { Sidebar } from "./navbar/sidebar";
-import { useViewportSize } from "./useViewPortSize";
+
+interface ViewableArea {
+  width: number;
+  height: number;
+}
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,8 +21,13 @@ export default function RootLayout({
 }) {
   const [sidebarHidden, setSidebarHidden] = useState(true);
   const [navbarHidden, setNavbarHidden] = useState(false);
-  // undefined on the Server, { width, height } on the client
-  const viewportSize = useViewportSize();
+  const [viewportSize, setViewableArea] = useState<ViewableArea>();
+
+  const handleResize = () => {
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+    setViewableArea({ width, height });
+  };
 
   const handleKeyPress = (e: KeyboardEvent) => {
     // close the sidebar using 'esc'
@@ -41,13 +50,16 @@ export default function RootLayout({
   };
 
   useEffect(() => {
+    window.addEventListener("resize", handleResize);
     document.addEventListener("keydown", handleKeyPress);
     document.addEventListener("scroll", handleScroll);
+
     setTimeout(() => {
       setNavbarHidden(true);
     }, 3000);
 
     return () => {
+      window.removeEventListener("resize", handleResize);
       document.removeEventListener("keypress", handleKeyPress);
     };
   }, []);
