@@ -61,7 +61,7 @@ export default function RootLayout({
         <MenuIcon
           active={!sidebarHidden}
           onClick={() => setSidebarHidden((prev) => !prev)}
-          className="fixed z-20 -mt-4 -ml-4 transform -translate-x-full -translate-y-full w-fit left-full top-full"
+          className="fixed z-20 left-[82%]"
         />
         <Sidebar className="z-10" hidden={sidebarHidden} />
         {children}
