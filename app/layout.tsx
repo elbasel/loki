@@ -54,10 +54,10 @@ export default function RootLayout({
   return (
     <html lang="en" className="text-white bg-slate-900">
       <body
-        style={{ height, width }}
+        style={height > 0 ? { height, width } : undefined}
         className={twMerge(
           inter.className,
-          "px-4 overflow-hidden flex flex-col py-2"
+          "px-4 h-[100dvh] overflow-hidden flex flex-col py-2"
         )}
       >
         <Navbar navbarHidden={navbarHidden} />
