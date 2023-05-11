@@ -1,34 +1,44 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-import { useEventListener, useIsomorphicLayoutEffect } from "usehooks-ts";
-
-interface WindowSize {
-  width: number;
-  height: number;
+export interface ViewportSize {
+  width: number | undefined;
+  height: number | undefined;
 }
 
-function useWindowSize(): WindowSize {
-  const [windowSize, setWindowSize] = useState<WindowSize>({
-    width: 0,
-    height: 0,
-  });
+export function getViewableArea(): ViewportSize {
+  if (typeof window === "undefined") {
+    return { width: undefined, height: undefined };
+  }
+  const viewportWidth = window.innerWidth;
+  const viewportHeight = window.innerHeight;
+  const documentWidth = document.documentElement.clientWidth;
+  const documentHeight = document.documentElement.clientHeight;
+  const width = Math.min(viewportWidth, documentWidth);
+  const height = Math.min(viewportHeight, documentHeight);
+  return { width, height };
+}
 
-  const handleSize = () => {
-    setWindowSize({
-      width: window.innerWidth,
-      height: window.innerHeight,
+export const useGetViewableArea = (): ViewportSize => {
+  const [viewableArea, setViewableArea] = useState(getViewableArea());
+
+  useEffect(() => {
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.contentBoxSize) {
+          const { inlineSize, blockSize } = entry.contentBoxSize[0];
+          setViewableArea({ width: inlineSize, height: blockSize });
+        } else {
+          setViewableArea(getViewableArea());
+        }
+      }
     });
-  };
 
-  useEventListener("resize", handleSize);
+    resizeObserver.observe(document.documentElement);
 
-  // Set size at the first client-side load
-  useIsomorphicLayoutEffect(() => {
-    handleSize();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    return () => {
+      resizeObserver.disconnect();
+    };
   }, []);
 
-  return windowSize;
-}
-
-export default useWindowSize;
+  return viewableArea;
+};
