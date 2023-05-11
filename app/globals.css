@@ -5,21 +5,25 @@
 @layer base {
   /* form & inputs */
   form {
-    @apply flex flex-col space-y-4 px-8 py-4;
+    @apply flex flex-col px-8 py-4 space-y-4;
   }
 
   input,
   button {
-    @apply focus:outline-none focus:ring-2 focus:ring-blue-400;
+    @apply block focus:outline-none focus:ring-2 focus:ring-blue-400;
   }
 
   input[type="text"] {
-    @apply px-4 py-2 rounded-md bg-black border border-gray-300;
+    @apply px-4 py-2 bg-black border border-gray-300 rounded-md;
   }
 
   /* headings */
   h1 {
     @apply text-2xl font-bold;
+  }
+
+  div {
+    @apply w-full;
   }
 }
 
@@ -30,8 +34,16 @@
 }
 
 @layer components {
+  .btn,
+  .text-input {
+    @apply block w-full hover:ring-blue-600 hover:ring-1;
+  }
   .btn {
-    @apply hover:bg-black hover:text-white active:animate-pulse active:scale-95 transition-all duration-200 font-[inherit] w-full px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 capitalize;
+    @apply bg-black active:animate-pulse disabled:cursor-not-allowed transition-all duration-200 font-[inherit] px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 capitalize;
+  }
+
+  .text-input {
+    @apply invalid:ring-red-700;
   }
 }
 

@@ -1,66 +1,39 @@
 "use client";
-import { useEffect, useState } from "react";
-import { getServerOpenAiKey, setServerOpenAiKey } from "./actions";
-import { Loader } from "@app/loader";
-import { AutoAnimate } from "@app/autoanimate";
-import { twMerge } from "tailwind-merge";
+import { ChatWindow } from "@app/chatwindow";
+import { useAi } from "@app/openai/useAi";
+import { useState } from "react";
 
 export const TestOpenAiPage: React.FC = () => {
-  const [OpenAiKey, setOpenAiKey] = useState("");
-  const [userPrompt, setUserPrompt] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [humanPrompt, setHumanPrompt] = useState("");
+  const { aiResponse, loading } = useAi(humanPrompt);
 
-  const handleSubmit = (formData: FormData) => {
-    setLoading(true);
-    if (userPrompt) setServerOpenAiKey(userPrompt);
-    const serverOpenAiKey = getServerOpenAiKey();
-    setOpenAiKey(serverOpenAiKey);
-    setTimeout(() => {
-      setLoading(false);
-    }, 1000);
+  const handleSubmit = async (formData: FormData) => {
+    const prompt = formData.get("prompt");
+    if (!prompt) return;
+    setHumanPrompt(prompt as string);
+    //   const docs = await loadUrl("https://react.dev");
+    //   const aiResponse = await getChatCompletionOnce(
+    //     formData.get("prompt") as string
+    //   );
+    //   setAiResponse(aiResponse);
+    //   console.log({ docs, aiResponse });
+    //   setTimeout(() => {
+    //     setLoading(false);
+    //   }, 300);
   };
 
-  useEffect(() => {
-    const serverOpenAiKey = getServerOpenAiKey();
-    setOpenAiKey(serverOpenAiKey);
-    setLoading(false);
-  }, []);
-
   return (
-    <form className="px-4" action={handleSubmit}>
+    <>
       <h1>Test Open Ai Api</h1>
-      <label hidden htmlFor="prompt">
-        Prompt
-      </label>
-      <input
-        value={userPrompt}
-        onChange={(e) => setUserPrompt(e.target.value)}
-        placeholder="Enter your prompt here"
-        className="block"
-        type="text"
-        id="prompt"
-        name="prompt"
+      <ChatWindow
+        onSubmit={handleSubmit}
+        messages={[
+          { id: 0, message: humanPrompt, author: "human" },
+          { id: 1, message: aiResponse, author: "ai" },
+        ]}
+        loading={loading}
+        inputName="prompt"
       />
-      <button className="btn" type="submit">
-        submit
-      </button>
-      <output
-        className="flex flex-wrap items-center overflow-hidden transition-all"
-        name="result"
-      >
-        <span className="shrink-0">Your current Open Ai API Key: </span>
-        <AutoAnimate className="flex items-center">
-          {!loading && OpenAiKey ? (
-            <span className={twMerge("mx-1 transition-all duration-700")}>
-              {OpenAiKey}
-            </span>
-          ) : loading ? (
-            <Loader />
-          ) : (
-            <span className="mx-1 text-red-500">No Key Provided!</span>
-          )}
-        </AutoAnimate>
-      </output>
-    </form>
+    </>
   );
 };
