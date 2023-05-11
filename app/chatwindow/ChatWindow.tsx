@@ -22,7 +22,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
 
   return (
     <form className="relative flex-1" action={onSubmit}>
-      <div className="absolute z-10 mt-6 transform -translate-x-full -translate-y-full top-[95%] left-full">
+      <div className="ChatWindow-InnerFormContainer absolute mt-6 transform -translate-x-full -translate-y-full top-[95%] left-full">
         <label hidden={true} htmlFor="prompt">
           Prompt
         </label>

@@ -61,7 +61,7 @@ export default function RootLayout({
         <MenuIcon
           active={!sidebarHidden}
           onClick={() => setSidebarHidden((prev) => !prev)}
-          className="fixed z-20 left-[90%]"
+          className="fixed inset-0 z-20 flex flex-row-reverse w-screen px-4 py-2 h-fit"
         />
         <Sidebar className="z-10" hidden={sidebarHidden} />
         {children}
