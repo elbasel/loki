@@ -74,11 +74,6 @@ export default function RootLayout({
         )}
       >
         <Navbar navbarHidden={navbarHidden} />
-        <MenuIcon
-          active={!sidebarHidden}
-          onClick={() => setSidebarHidden((prev) => !prev)}
-          className="fixed inset-0 z-20 flex flex-row-reverse w-screen px-4 py-2 h-fit"
-        />
         <Sidebar className="z-10" hidden={sidebarHidden} />
         {children}
       </body>
