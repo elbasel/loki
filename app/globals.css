@@ -3,51 +3,9 @@
 @tailwind utilities;
 
 @layer base {
-  /* form & inputs */
-  input,
-  button {
-    @apply block focus:outline-none focus:ring-2 focus:ring-blue-400;
-  }
-
-  input[type="text"] {
-    @apply px-4 py-2 bg-black rounded-md;
-  }
 
   /* headings */
   h1 {
     @apply text-2xl font-bold;
-  }
-
-  div {
-    @apply w-full;
-  }
-}
-
-@layer utilities {
-  .fadeIn {
-    animation: fadeIn 0.5s ease-in-out;
-  }
-}
-
-@layer components {
-  .btn,
-  .text-input {
-    @apply block w-full hover:ring-blue-600 hover:ring-1;
-  }
-  .btn {
-    @apply bg-black active:animate-pulse disabled:cursor-not-allowed transition-all duration-200 font-[inherit] px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 capitalize;
-  }
-
-  .text-input {
-    @apply invalid:ring-red-700;
-  }
-}
-
-@keyframes fadeIn {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
   }
 }

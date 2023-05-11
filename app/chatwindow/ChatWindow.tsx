@@ -22,44 +22,30 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
 
   return (
     <>
-      <output
-        className="flex mt-6 max-h-[86vh] overflow-hidden transition-all"
-        name={"user-prompt"}
-      >
-        {/* <span className="shrink-0">Your current Open Ai API Key: </span> */}
-        <AutoAnimate className="flex flex-col-reverse gap-2 pt-2 overflow-y-auto scrollbar-thin ChatWindow-ChatMessages">
-          {/* a chat message component */}
-          {messages.map(({ message, author, id }) => (
-            <Fragment key={id}>
+      <output className="mt-auto overflow-y-auto scrollbar-thin">
+        <AutoAnimate className="flex flex-col gap-2">
+          {messages.map((msg, i) => (
+            <Fragment key={i}>
               <ChatMessage
-                message={message}
-                className={twMerge(author === "human" && "flex-row-reverse")}
+                message={msg.message}
+                className={twMerge(msg.author === "user" && "flex-row-reverse")}
               />
             </Fragment>
           ))}
         </AutoAnimate>
       </output>
-      <form className="relative flex-1 text-xl" action={handleSubmit}>
-        <div className="ChatWindow-InnerFormContainer absolute mt-6 transform -translate-x-full -translate-y-full top-[95%] left-full">
-          <label hidden={true} htmlFor="user-prompt">
-            Prompt
-          </label>
-          <input
-            required
-            placeholder="Enter your prompt here"
-            className="text-input"
-            type="text"
-            id="user-prompt"
-            name={"user-prompt"}
-          />
-          <button
-            disabled={loading}
-            className="absolute top-0 right-0 flex items-center justify-center min-h-full w-fit btn"
-            type="submit"
-          >
-            {loading ? <Loader /> : <RiSendPlaneLine />}
-          </button>
-        </div>
+      <form
+        className="flex w-full gap-1 px-4 py-2 mt-4 bg-black rounded-lg"
+        action={handleSubmit}
+      >
+        <input
+          type="text"
+          name="user-prompt"
+          className="flex-1 block bg-black rounded-lg outline-none"
+        />
+        <button type="submit" className="px-2">
+          {loading ? <Loader /> : <RiSendPlaneLine />}
+        </button>
       </form>
     </>
   );

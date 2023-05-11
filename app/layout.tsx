@@ -3,7 +3,6 @@ import "./globals.css";
 import { Inter } from "next/font/google";
 import { Navbar } from "./navbar";
 import { twMerge } from "tailwind-merge";
-import { MenuIcon } from "./icons";
 import { useEffect, useState } from "react";
 import { Sidebar } from "./navbar/sidebar";
 
@@ -70,7 +69,7 @@ export default function RootLayout({
         style={viewportSize}
         className={twMerge(
           inter.className,
-          "px-4 h-[100dvh] overflow-hidden flex flex-col py-2"
+          "px-4 h-[100dvh] !h-[100svh] overflow-hidden flex flex-col py-2"
         )}
       >
         <Navbar navbarHidden={navbarHidden} />

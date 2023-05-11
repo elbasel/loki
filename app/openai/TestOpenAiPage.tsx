@@ -1,37 +1,40 @@
 "use client";
 import { ChatWindow } from "@app/chatwindow";
-import { ChatMessageProps } from "@app/chatwindow/ChatMessage";
-import { useAi } from "@app/openai/useAi";
 import { useState } from "react";
+import { getChatCompletionOnce } from "./actions";
+import { ChatMessageProps } from "@app/chatwindow/ChatMessage";
 
 export const TestOpenAiPage: React.FC = () => {
-  const [userPrompt, setUserPrompt] = useState("");
-  const { aiResponse, loading } = useAi(userPrompt);
+  const [loading, setLoading] = useState(false);
+  const [messages, setMessages] = useState<ChatMessageProps[]>([]);
 
-  const handleSubmit = async (userPrompt: string) => {
-    console.log({ userPrompt });
+  const getNextResponse = async (userPrompt: string) => {
+    setLoading(true);
+    const aiResponse = await getChatCompletionOnce(userPrompt);
+    setMessages((prev) => [
+      ...prev,
+      { id: 1, message: aiResponse, author: "ai" },
+      { id: 2, message: aiResponse, author: "ai" },
+      { id: 4, message: aiResponse, author: "ai" },
+      { id: 345, message: aiResponse, author: "ai" },
+      { id: 345234, message: aiResponse, author: "ai" },
+      { id: 3245, message: aiResponse, author: "ai" },
+    ]);
+    setTimeout(() => {
+      setLoading(false);
+    }, 1000);
+  };
+
+  const handleSubmit = (userPrompt: string) => {
     if (!userPrompt) return;
-    // this also triggers aiResponse to be updated
-    setUserPrompt(userPrompt);
-    //   const docs = await loadUrl("https://react.dev");
-    //   const aiResponse = await getChatCompletionOnce(
-    //     formData.get("prompt") as string
-    //   );
-    //   setAiResponse(aiResponse);
-    //   console.log({ docs, aiResponse });
-    //   setTimeout(() => {
-    //     setLoading(false);
-    //   }, 300);
+    setMessages((prev) => [
+      ...prev,
+      { id: 0, message: userPrompt, author: "user" },
+    ]);
+    getNextResponse(userPrompt);
   };
 
   return (
-    <ChatWindow
-      onSubmit={handleSubmit}
-      messages={[
-        { id: 0, message: userPrompt, author: "human" },
-        { id: 1, message: aiResponse, author: "ai" },
-      ]}
-      loading={loading}
-    />
+    <ChatWindow onSubmit={handleSubmit} messages={messages} loading={loading} />
   );
 };
