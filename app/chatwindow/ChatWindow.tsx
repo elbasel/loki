@@ -20,8 +20,11 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
   console.log({ messages });
 
   return (
-    <form className="flex flex-col-reverse flex-1 px-4" action={onSubmit}>
-      <div className="relative mt-6">
+    <form
+      className="relative flex flex-col-reverse flex-1 px-4"
+      action={onSubmit}
+    >
+      <div className="absolute z-10 mt-6">
         <label hidden={true} htmlFor="prompt">
           Prompt
         </label>
@@ -48,7 +51,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
         name={inputName}
       >
         {/* <span className="shrink-0">Your current Open Ai API Key: </span> */}
-        <AutoAnimate className="flex flex-col-reverse gap-2">
+        <AutoAnimate className="flex flex-col-reverse gap-2 pb-16">
           {/* a chat message component */}
           {messages.map(({ message, author, id }) => (
             <React.Fragment key={id}>
