@@ -9,11 +9,6 @@ import { Sidebar } from "./navbar/sidebar";
 
 const inter = Inter({ subsets: ["latin"] });
 
-// export const metadata = {
-//   title: "Chat",
-//   description: "Chat",
-// };
-
 export default function RootLayout({
   children,
 }: {
@@ -42,7 +37,6 @@ export default function RootLayout({
     }
   };
 
-  // console.log('test'')
   useEffect(() => {
     document.addEventListener("keydown", handleKeyPress);
     document.addEventListener("scroll", handleScroll);
@@ -60,14 +54,14 @@ export default function RootLayout({
       <body
         className={twMerge(
           inter.className,
-          "px-4 min-h-screen !min-h-[100dvh] flex flex-col"
+          "px-4 min-h-screen !min-h-[100dvh] flex flex-col py-2"
         )}
       >
         <Navbar navbarHidden={navbarHidden} />
         <MenuIcon
           active={!sidebarHidden}
           onClick={() => setSidebarHidden((prev) => !prev)}
-          className="fixed z-20 hidden -mt-4 -ml-4 transform -translate-x-full -translate-y-full w-fit left-full top-full"
+          className="fixed z-20 -mt-4 -ml-4 transform -translate-x-full -translate-y-full w-fit left-full top-full"
         />
         <Sidebar className="z-10" hidden={sidebarHidden} />
         {children}

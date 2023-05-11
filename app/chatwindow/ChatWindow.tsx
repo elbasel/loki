@@ -1,8 +1,9 @@
 import { AutoAnimate } from "@app/autoanimate";
 import { Loader } from "@app/loader";
-import React, { useState } from "react";
+import { Fragment, useState } from "react";
 import { ChatMessage, type ChatMessageProps } from "./ChatMessage";
 import { twMerge } from "tailwind-merge";
+import { RiSendPlaneLine } from "react-icons/ri";
 
 interface ChatWindowProps {
   onSubmit: (formData: FormData) => void;
@@ -20,11 +21,8 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
   console.log({ messages });
 
   return (
-    <form
-      className="relative flex flex-col-reverse flex-1 px-4"
-      action={onSubmit}
-    >
-      <div className="absolute z-10 mt-6">
+    <form className="relative flex-1 py-2" action={onSubmit}>
+      <div className="absolute z-10 mt-6 transform -translate-x-full -translate-y-full top-[89%] left-full">
         <label hidden={true} htmlFor="prompt">
           Prompt
         </label>
@@ -43,7 +41,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
           className="absolute top-0 right-0 flex items-center justify-center min-h-full w-fit btn"
           type="submit"
         >
-          {loading ? <Loader /> : "Submit"}
+          {loading ? <Loader /> : <RiSendPlaneLine />}
         </button>
       </div>
       <output
@@ -54,12 +52,12 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
         <AutoAnimate className="flex flex-col-reverse gap-2 pb-16">
           {/* a chat message component */}
           {messages.map(({ message, author, id }) => (
-            <React.Fragment key={id}>
+            <Fragment key={id}>
               <ChatMessage
                 message={message}
                 className={twMerge(author === "human" && "flex-row-reverse")}
               />
-            </React.Fragment>
+            </Fragment>
           ))}
         </AutoAnimate>
       </output>

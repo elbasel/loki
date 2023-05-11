@@ -18,7 +18,7 @@ export const MenuIcon: React.FC<MenuIconProps> = ({
       >
         <div
           className={twMerge(
-            "relative flex overflow-hidden items-center justify-center rounded-full w-[50px] h-[50px] transform transition-all bg-slate-700 ring-0 ring-gray-300 hover:ring-8 ring-opacity-30 duration-200 shadow-md",
+            "relative flex overflow-hidden items-center justify-center rounded-full w-[50px] h-[50px] transform transition-all bg-slate-700 ring-0 ring-gray-300 ring-opacity-30 duration-200 shadow-md",
             active && "ring-4"
           )}
         >
