@@ -23,17 +23,14 @@ export const TestOpenAiPage: React.FC = () => {
   };
 
   return (
-    <>
-      <h1>Test Open Ai Api</h1>
-      <ChatWindow
-        onSubmit={handleSubmit}
-        messages={[
-          { id: 0, message: humanPrompt, author: "human" },
-          { id: 1, message: aiResponse, author: "ai" },
-        ]}
-        loading={loading}
-        inputName="prompt"
-      />
-    </>
+    <ChatWindow
+      onSubmit={handleSubmit}
+      messages={[
+        { id: 0, message: humanPrompt, author: "human" },
+        { id: 1, message: aiResponse, author: "ai" },
+      ]}
+      loading={loading}
+      inputName="prompt"
+    />
   );
 };

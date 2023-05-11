@@ -34,9 +34,20 @@ export default function RootLayout({
     }
   };
 
+  const handleScroll = () => {
+    if (window.scrollY > 100) {
+      setNavbarHidden(true);
+    } else {
+      setNavbarHidden(false);
+    }
+  };
+
   useEffect(() => {
     document.addEventListener("keydown", handleKeyPress);
-    setTimeout(() => {}, 3000);
+    document.addEventListener("scroll", handleScroll);
+    setTimeout(() => {
+      setNavbarHidden(true);
+    }, 3000);
 
     return () => {
       document.removeEventListener("keypress", handleKeyPress);
