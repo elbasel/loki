@@ -6,7 +6,7 @@ import { twMerge } from "tailwind-merge";
 import { MenuIcon } from "./icons";
 import { useEffect, useState } from "react";
 import { Sidebar } from "./navbar/sidebar";
-import { useWindowSize } from "usehooks-ts";
+import useWindowSize from "./useWindowSize";
 
 const inter = Inter({ subsets: ["latin"] });
 
