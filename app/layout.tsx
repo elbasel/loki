@@ -54,14 +54,14 @@ export default function RootLayout({
       <body
         className={twMerge(
           inter.className,
-          "px-4 min-h-screen !min-h-[100dvh] flex flex-col py-2"
+          "px-4 h-[100dvh] flex flex-col py-2"
         )}
       >
         <Navbar navbarHidden={navbarHidden} />
         <MenuIcon
           active={!sidebarHidden}
           onClick={() => setSidebarHidden((prev) => !prev)}
-          className="fixed z-20 left-[82%]"
+          className="fixed z-20 left-[90%]"
         />
         <Sidebar className="z-10" hidden={sidebarHidden} />
         {children}
