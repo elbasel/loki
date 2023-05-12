@@ -6,6 +6,12 @@
 
   /* headings */
   h1 {
-    @apply text-2xl font-bold;
+    @apply my-4 text-2xl font-bold;
+  }
+}
+
+@layer utilities {
+  .app-scrollbar {
+    @apply scrollbar-track-rounded-lg scrollbar-thumb-blue-700 scrollbar-track-slate-700 scrollbar-thin scrollbar-thumb-rounded-lg
   }
 }

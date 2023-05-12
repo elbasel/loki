@@ -1,8 +1,8 @@
 "use client";
-import { ChatWindow } from "@app/chatwindow";
 import { useState } from "react";
 import { getChatCompletionOnce } from "./actions";
-import { ChatMessageProps } from "@app/chatwindow/ChatMessage";
+import { ChatWindow } from "@app/chat-window";
+import { ChatMessageProps } from "@app/chat-window/ChatMessage";
 
 export const TestOpenAiPage: React.FC = () => {
   const [loading, setLoading] = useState(false);

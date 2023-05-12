@@ -11,7 +11,7 @@ export default function Home() {
         <Link className="navLink" href="/google">
           Google
         </Link>
-        <Link className="navLink" href="/openai">
+        <Link className="navLink" href="/open-ai">
           Open Ai
         </Link>
       </ul>

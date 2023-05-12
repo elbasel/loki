@@ -1,5 +1,5 @@
 "use client";
-import { ChatWindow } from "@app/chatwindow";
+import { ChatWindow } from "@app/chat-window";
 
 const AskPage: React.FC = () => {
   return <>{/* <ChatWindow onSubmit={} Messages={} /> */}</>;

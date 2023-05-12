@@ -1,9 +1,10 @@
-import { AutoAnimate } from "@app/autoanimate";
+import { AutoAnimate } from "@app/auto-animate";
 import { Loader } from "@app/loader";
 import { Fragment } from "react";
 import { ChatMessage, type ChatMessageProps } from "./ChatMessage";
 import { twMerge } from "tailwind-merge";
 import { RiSendPlaneLine } from "react-icons/ri";
+import { TextArea } from "@app/text-area";
 
 interface ChatWindowProps {
   onSubmit: (userPrompt: string) => any;
@@ -38,12 +39,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
         className="flex w-full gap-1 px-4 py-2 mt-4 bg-black rounded-lg"
         action={handleSubmit}
       >
-        <input
-          type="text"
-          name="user-prompt"
-          placeholder="Enter your prompt here"
-          className="flex-1 block bg-black rounded-lg outline-none"
-        />
+        <TextArea className="overflow-y-auto max-h-64"/>
         <button type="submit" className="px-2">
           {loading ? <Loader /> : <RiSendPlaneLine />}
         </button>
