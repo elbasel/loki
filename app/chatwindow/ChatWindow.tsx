@@ -1,6 +1,6 @@
 import { AutoAnimate } from "@app/autoanimate";
 import { Loader } from "@app/loader";
-import { Fragment, useState } from "react";
+import { Fragment } from "react";
 import { ChatMessage, type ChatMessageProps } from "./ChatMessage";
 import { twMerge } from "tailwind-merge";
 import { RiSendPlaneLine } from "react-icons/ri";
@@ -41,6 +41,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
         <input
           type="text"
           name="user-prompt"
+          placeholder="Enter your prompt here"
           className="flex-1 block bg-black rounded-lg outline-none"
         />
         <button type="submit" className="px-2">

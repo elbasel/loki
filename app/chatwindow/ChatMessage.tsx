@@ -16,7 +16,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
     <div className={twMerge("flex", className)}>
       <p
         className={
-          "ChatMessage w-fit max-w-[53vw] border-white border rounded-lg py-2 px-4 transition-all duration-700"
+          "ChatMessage w-fit max-w-[80%] border-white border rounded-lg py-2 px-4 transition-all duration-700"
         }
       >
         {message}

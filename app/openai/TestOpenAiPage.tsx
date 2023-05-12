@@ -13,12 +13,7 @@ export const TestOpenAiPage: React.FC = () => {
     const aiResponse = await getChatCompletionOnce(userPrompt);
     setMessages((prev) => [
       ...prev,
-      { id: 1, message: aiResponse, author: "ai" },
-      { id: 2, message: aiResponse, author: "ai" },
-      { id: 4, message: aiResponse, author: "ai" },
-      { id: 345, message: aiResponse, author: "ai" },
-      { id: 345234, message: aiResponse, author: "ai" },
-      { id: 3245, message: aiResponse, author: "ai" },
+      { id: messages.length + 1, message: aiResponse, author: "ai" },
     ]);
     setTimeout(() => {
       setLoading(false);
@@ -29,7 +24,7 @@ export const TestOpenAiPage: React.FC = () => {
     if (!userPrompt) return;
     setMessages((prev) => [
       ...prev,
-      { id: 0, message: userPrompt, author: "user" },
+      { id: messages.length + 1, message: userPrompt, author: "user" },
     ]);
     getNextResponse(userPrompt);
   };
