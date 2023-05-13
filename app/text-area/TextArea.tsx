@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useRef, ChangeEvent } from "react";
 import { twMerge } from "tailwind-merge";
 
@@ -8,13 +6,15 @@ interface TextAreaProps {
   onChange?: (value: string) => void;
   name?: string;
   className?: string;
+  required?: boolean;
 }
 
 export const TextArea: React.FC<TextAreaProps> = ({
   value,
   onChange,
   name,
-  className
+  className,
+  required,
 }) => {
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -33,10 +33,15 @@ export const TextArea: React.FC<TextAreaProps> = ({
 
   return (
     <textarea
+      required={required}
       ref={inputRef}
-      className={twMerge("w-full text-white bg-black rounded-lg resize-none app-scrollbar focus:outline-none", className)}
+      className={twMerge(
+        "w-full text-white bg-black py-2 px-4 rounded-lg resize-none app-scrollbar focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200",
+        className
+      )}
       placeholder="Type something..."
       onChange={handleInputChange}
+      rows={1}
       value={value}
       name={name}
     />

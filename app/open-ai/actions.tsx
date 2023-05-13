@@ -1,7 +1,13 @@
 "use server";
 import { ChatOpenAI } from "langchain/chat_models/openai";
-import { HumanChatMessage, SystemChatMessage } from "langchain/schema";
+import { AIChatMessage, HumanChatMessage, SystemChatMessage } from "langchain/schema";
 import { CheerioWebBaseLoader } from "langchain/document_loaders/web/cheerio";
+
+export interface Message {
+  id: number;
+  message: string;
+  author: "human" | "ai";
+}
 
 // example action
 // export const getServerOpenAiKey = (): string => {
@@ -23,5 +29,17 @@ export const loadUrl = async (url: string) => {
 export const getChatCompletionOnce = async (prompt: string) => {
   const chat = new ChatOpenAI();
   const response = await chat.call([new HumanChatMessage(prompt)]);
+  return response.text;
+};
+
+export const getChatCompletion = async (messages: Message[]) => {
+  const chat = new ChatOpenAI();
+  const response = await chat.call(
+    messages.map((message) =>
+      message.author === "human"
+        ? new HumanChatMessage(message.message)
+        : new AIChatMessage(message.message)
+    )
+  );
   return response.text;
 };

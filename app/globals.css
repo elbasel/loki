@@ -6,7 +6,7 @@
 
   /* headings */
   h1 {
-    @apply my-4 text-2xl font-bold;
+    @apply text-2xl font-bold;
   }
 }
 
