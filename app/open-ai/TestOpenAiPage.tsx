@@ -26,11 +26,11 @@ export const TestOpenAiPage: React.FC = () => {
       ...messages,
       { message: userPrompt, author: "human", id: 1 },
     ];
-    setUserPrompt("");
     setMessages(newMessages);
   };
 
   useEffect(() => {
+    console.log({ userPrompt });
     if (!userPrompt) return;
     const newMessages: Message[] = [
       ...messages,

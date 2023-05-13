@@ -19,14 +19,22 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
   loading,
   messages,
 }) => {
-  const formRef = useRef(null);
+  // const textAreaRef = useRef(null);
   const outputRef = useRef(null);
   const [formValidationEnabled, setFormValidationEnabled] = useState(false);
 
   const handleSubmit = (formData: FormData) => {
     setFormValidationEnabled(true);
     const userPrompt = formData.get("user-prompt") as string;
+    if (!userPrompt) return;
     onSubmit(userPrompt);
+    const textAreaElem = document.querySelector(
+      "textarea"
+    ) as HTMLTextAreaElement;
+    if (!textAreaElem) return;
+    textAreaElem.value = "";
+    textAreaElem.textContent = "";
+    setFormValidationEnabled(false)
   };
 
   const handleKeyPress = (e: KeyboardEvent) => {
@@ -74,7 +82,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
       <form className="relative flex w-full gap-2 mt-4" action={handleSubmit}>
         <TextArea
           // TODO: forward this ref to the textarea
-          // ref={formRef}
+          // ref={textAreaRef}
           required={formValidationEnabled}
           name="user-prompt"
           className={twMerge(
