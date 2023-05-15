@@ -101,7 +101,10 @@ export const getInformedAiResponse = async (
   });
   // console.log(docs);
 
-const aiResponse = await getChatCompletionOnce(`use the following information to answer the {query}, only reply with the relevant information sufficient to answer the query: ${res.text}. {query}: ${query}}`)
+  console.log({ res });
+  const aiResponse = await getChatCompletionOnce(
+    `use the following information to answer the {query}, only reply with the relevant information sufficient to answer the query: ${res.text}. {query}: ${query}}`
+  );
   return {
     response: aiResponse,
     // sources: [googleUrl, ...searchResults.map((r) => r.url)],
