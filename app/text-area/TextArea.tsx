@@ -22,7 +22,7 @@ export const TextArea: React.FC<TextAreaProps> = ({
 
   const handleInputChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     resizeInput();
-    if (onChange) onChange(event.target.value);
+    if (onChange) onChange(event.target.value.trim());
   };
 
   const resizeInput = () => {
@@ -42,7 +42,7 @@ export const TextArea: React.FC<TextAreaProps> = ({
         "w-full text-white bg-black py-2 px-4 rounded-lg resize-none app-scrollbar focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200",
         className
       )}
-      placeholder="Type something..."
+      placeholder={disabled ? "Loading..." : "Type your message here..."}
       onChange={handleInputChange}
       rows={1}
       value={value}

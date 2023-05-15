@@ -2,6 +2,7 @@
 import { ChatOpenAI } from "langchain/chat_models/openai";
 import {
   AIChatMessage,
+  ChainValues,
   HumanChatMessage,
   SystemChatMessage,
 } from "langchain/schema";
@@ -70,22 +71,18 @@ export const getInformedAiResponse = async (
   const textSplitter = new RecursiveCharacterTextSplitter({ chunkSize: 1000 });
   const googleSearchResults = await getGoogleSearchResults(query);
 
-  const urlToLoad = googleSearchResults.searchResults[0].url;
   const googleUrl = googleSearchResults.googleQueryURl;
-
-  const firstSearchResultContent = (await loadUrl(urlToLoad))[0].pageContent;
-  const secondSearchResultContent = (await loadUrl(urlToLoad))[0].pageContent;
-  const thirdSearchResultContent = (await loadUrl(urlToLoad))[0].pageContent;
   const googleQueryURLContent = (await loadUrl(googleUrl))[0].pageContent;
+  const searchResults = googleSearchResults.searchResults;
 
   // console.log({ searchResults })
 
   // console.log({content: searchResults[0].pageContent})
   const docs = await textSplitter.createDocuments([
     googleQueryURLContent,
-    firstSearchResultContent,
-    secondSearchResultContent,
-    thirdSearchResultContent,
+    // (await loadUrl(searchResults[0].url))[0].pageContent,
+    // (await loadUrl(searchResults[1].url))[0].pageContent,
+    // (await loadUrl(searchResults[2].url))[0].pageContent,
   ]);
   // console.log({ docs });
 
@@ -102,6 +99,12 @@ export const getInformedAiResponse = async (
   const res = await chain.call({
     query,
   });
-  console.log(docs);
-  return { response: res.text, sources: [urlToLoad, googleUrl] };
+  // console.log(docs);
+
+const aiResponse = await getChatCompletionOnce(`use the following information to answer the {query}, only reply with the relevant information sufficient to answer the query: ${res.text}. {query}: ${query}}`)
+  return {
+    response: aiResponse,
+    // sources: [googleUrl, ...searchResults.map((r) => r.url)],
+    sources: [googleUrl],
+  };
 };
