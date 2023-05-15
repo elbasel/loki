@@ -83,6 +83,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
         <TextArea
           // TODO: forward this ref to the textarea
           // ref={textAreaRef}
+          disabled={loading}
           required={formValidationEnabled}
           name="user-prompt"
           className={twMerge(

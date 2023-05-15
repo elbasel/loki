@@ -7,6 +7,7 @@ interface TextAreaProps {
   name?: string;
   className?: string;
   required?: boolean;
+  disabled?: boolean;
 }
 
 export const TextArea: React.FC<TextAreaProps> = ({
@@ -15,6 +16,7 @@ export const TextArea: React.FC<TextAreaProps> = ({
   name,
   className,
   required,
+  disabled,
 }) => {
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -33,6 +35,7 @@ export const TextArea: React.FC<TextAreaProps> = ({
 
   return (
     <textarea
+      disabled={disabled}
       required={required}
       ref={inputRef}
       className={twMerge(

@@ -10,6 +10,7 @@ export type QueryResult = {
   searchResults: GoogleSearchResult[];
   extraURLS: string[];
   hosts: string[];
+  googleQueryURl: string;
 };
 
 // do not include results from these hosts
@@ -58,5 +59,5 @@ export const getGoogleSearchResults = async (
     searchResults.push({ url: url.href, title });
   });
 
-  return { searchResults, extraURLS, hosts: [...UniqueHosts.values()] };
+  return { searchResults, extraURLS, hosts: [...UniqueHosts.values()],googleQueryURl: urlToFetch };
 };
