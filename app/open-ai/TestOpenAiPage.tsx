@@ -1,25 +1,25 @@
 "use client";
 import { useEffect, useState } from "react";
-import {
-  type Message,
-  getChatCompletion,
-} from "./actions";
+import { type Message, getChatCompletion } from "./actions";
 import { ChatWindow } from "@app/chat-window";
+import { ask } from "@app/ask/actions";
 
 export const TestOpenAiPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
-  const [aiResponse, setaiResponse] = useState("");
+  const [aiResponse, setAiResponse] = useState("");
   const [userPrompt, setUserPrompt] = useState("");
 
   const getAiResponse = async (messages: Message[]) => {
     setLoading(true);
-    const aiResponse = await getChatCompletion(messages);
-    setaiResponse(aiResponse);
+    // const aiResponse = await getChatCompletion(messages);
+    const aiResponse = await ask(userPrompt);
+    console.log({ aiResponse });
+    setAiResponse(aiResponse);
     setLoading(false);
   };
 
-  const handleSubmit = (userPrompt: string) => {
+  const handleSubmit = async (userPrompt: string) => {
     if (!userPrompt) return;
     setUserPrompt(userPrompt);
     const newMessages: Message[] = [
