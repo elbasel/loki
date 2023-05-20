@@ -1,6 +1,6 @@
 "use client";
 
-import { AutoAnimate } from "@app/auto-animate";
+import { AutoAnimate } from "@app/UI";
 import { Loader } from "@app/loader";
 import { Fragment, useEffect, useRef, useState } from "react";
 import { ChatMessage, type ChatMessageProps } from "./ChatMessage";

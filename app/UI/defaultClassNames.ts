@@ -6,10 +6,8 @@ export const buttonClassName = [
   "w-full",
   "min-h-[38px]",
   // normal
-  "bg-white",
-  "hover:bg-black",
-  "text-black",
-  "hover:text-white",
+  "bg-blue-500",
+  "text-white",
   "active:scale-95",
   "transition",
   "duration-200",
@@ -17,6 +15,9 @@ export const buttonClassName = [
   "py-2",
   "px-4",
   "rounded-lg",
+  //hover
+  "hover:bg-white",
+  "hover:text-black",
   // disabled
   "disabled:bg-gray-800",
   "disabled:text-white",
@@ -27,6 +28,7 @@ export const inputClassName = [
   // layout
   "block",
   "w-full",
+  "min-h-[38px]",
   // normal
   "bg-black",
   "text-white",
@@ -34,9 +36,17 @@ export const inputClassName = [
   "py-2",
   "px-4",
   "leading-tight",
+  "transition",
+  "duration-200",
+  // hover
+  "hover:border-blue-500/50",
+  // focus
   "focus:outline-none",
   "focus:ring",
   "focus:ring-blue-500",
-  "transition",
-  "duration-200",
+].join(" ");
+
+export const outputClassName = [
+  // layout
+  "flex-center-1",
 ].join(" ");

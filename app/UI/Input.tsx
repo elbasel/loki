@@ -11,6 +11,7 @@ interface InputProps {
   className?: string;
   placeholder?: string;
   required?: boolean;
+  id?: string;
   forwardedRef?: React.Ref<HTMLInputElement>;
 }
 
@@ -23,6 +24,7 @@ export const Input: React.FC<InputProps> = (props) => {
     required,
     placeholder,
     forwardedRef,
+    id,
   } = props;
 
   return (
@@ -34,6 +36,7 @@ export const Input: React.FC<InputProps> = (props) => {
       onChange={(e) => onChange && onChange(e.target.value)}
       value={value}
       name={name}
+      id={id}
     />
   );
 };

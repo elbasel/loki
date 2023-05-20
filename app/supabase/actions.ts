@@ -1,10 +1,17 @@
 "use server";
 
 import { OpenAIEmbeddings } from "langchain/embeddings/openai";
+import {
+  loadSummarizationChain,
+  RetrievalQAChain,
+  ConversationalRetrievalQAChain,
+  loadQARefineChain,
+} from "langchain/chains";
 import { SupabaseHybridSearch } from "langchain/retrievers/supabase";
 import { createClient } from "@supabase/supabase-js";
 import { getChatCompletion, getChatCompletionOnce } from "@app/open-ai/actions";
 import { prompts } from "./prompts";
+import { OpenAI } from "langchain";
 
 const EMBEDDINGS_TIMEOUT = 0; // 0 means no timeout
 const SUPABASE_REQUEST_INTERVAL = 1500; // 1.5s
@@ -32,7 +39,7 @@ const _getKeyWords = async (text: string) => {
 };
 
 export const getContextualAiResponse = async (input: string) => {
-  const relevantDocsSet = new Set();
+  const relevantDocsSet: Set<string> = new Set();
   const getRelevantDocsPromiseList = [];
 
   const trimmedInput = input.trim().replaceAll("\n", "");
@@ -70,21 +77,37 @@ export const getContextualAiResponse = async (input: string) => {
 
   await Promise.all(getRelevantDocsPromiseList);
 
+  const wholeInputRelevantDocs = await retriever.getRelevantDocuments(input);
+  if (wholeInputRelevantDocs[0])
+    relevantDocsSet.add(wholeInputRelevantDocs[0].pageContent);
+
   const queryContext = [...relevantDocsSet].join(" ");
   const aiHasNoContext = queryContext.length === 0;
 
   if (aiHasNoContext)
     return { aiResponse: prompts.noContextAvailable, relevantDocuments: [] };
 
-  const aiResponse = await getChatCompletion([
-    {
-      id: Math.random(),
-      message: prompts.answerBasedOnContext(queryContext, input),
-      author: "system",
-    },
-  ]);
+  // const aiResponse = await getChatCompletion([
+  //   {
+  //     id: Math.random(),
+  //     message: prompts.answerBasedOnContext(queryContext, input),
+  //     author: "system",
+  //   },
+  // ]);
 
-  return { aiResponse, relevantDocuments: [...relevantDocsSet] };
+  const openAiChatModel = new OpenAI();
+
+  const chain = loadQARefineChain(openAiChatModel);
+
+  const aiResponse = await chain.call({
+    input_documents: [...relevantDocsSet],
+    question: input,
+  });
+
+  return {
+    aiResponse: aiResponse.output_text,
+    relevantDocuments: [...relevantDocsSet],
+  };
 };
 
 export const storeAsEmbeddings = async (content: string, metadata?: any) => {
@@ -104,6 +127,7 @@ export const storeAsEmbeddings = async (content: string, metadata?: any) => {
 
 // various chain examples, each chain has a different use case
 // import { loadSummarizationChain, RetrievalQAChain,ConversationalRetrievalQAChain , loadQARefineChain,  } from "langchain/chains";
+// import { OpenAI } from "langchain";
 // * SummarizationChain
 // const chain = loadSummarizationChain(openAiModel, { type: "map_reduce" });
 // const summarizedInput = await chain.call({
@@ -111,6 +135,7 @@ export const storeAsEmbeddings = async (content: string, metadata?: any) => {
 // });
 
 // * QARefineChain
+// const openAiChatModel = new OpenAI();
 // const chain = loadQARefineChain(openAiChatModel, {});
 // const aiResponse = await chain.call({
 //   input_documents: relevantDocuments,

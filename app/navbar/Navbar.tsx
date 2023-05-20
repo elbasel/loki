@@ -1,4 +1,4 @@
-import { AutoAnimate } from "@app/auto-animate";
+import { AutoAnimate } from "@app/UI";
 
 interface NavbarProps {
   navbarHidden?: boolean;

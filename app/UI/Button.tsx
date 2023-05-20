@@ -8,7 +8,7 @@ interface ButtonProps {
   onClick?: () => void;
   className?: string;
   children?: React.ReactNode;
-  disabled: boolean;
+  disabled?: boolean;
 }
 
 export const Button: React.FC<ButtonProps> = ({

@@ -1,45 +1,63 @@
 "use client";
 
-import { Button } from "@app/UI/Button";
+import { AutoAnimate, Button, InputWithRef } from "@app/UI";
 import { getContextualAiResponse, storeAsEmbeddings } from "./actions";
 import { useRef, useState } from "react";
-import { InputWithRef } from "@app/UI/Input";
-import { Loader } from "@app/loader";
 
-interface TestSupabaseProps {}
-
-export const TestSupabase: React.FC<TestSupabaseProps> = ({}) => {
-  const [loading, setLoading] = useState(false);
+export const TestSupabase: React.FC = () => {
+  const [gettingAiResponse, setGettingAiResponse] = useState(false);
   const [aiResponse, setAiResponse] = useState("");
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [relevantDocuments, setRelevantDocuments] = useState<string[]>();
 
-  const handleClick = async () => {
-    const inputValue = inputRef.current?.value;
-    if (!inputValue) return;
+  const [isAiLearning, setIsAiLearning] = useState(false);
 
-    setLoading(true);
+  const askInputRef = useRef<HTMLInputElement>(null);
+  const teachInputRef = useRef<HTMLInputElement>(null);
 
-    // * store a document a document in the database
-    // const storedDocument = await storeAsEmbeddings(inputValue);
-    // console.log(storedDocument);
+  const handleAsk = async () => {
+    const askInputValue = askInputRef.current?.value;
+    if (!askInputValue) return;
+    askInputRef.current.value = "";
 
-    // * get a response based on relevant documents in the database
-    const res = await getContextualAiResponse(inputValue);
-    console.log(res);
-    setAiResponse(res.aiResponse || "");
+    setGettingAiResponse(true);
+    const aiAnswer = await getContextualAiResponse(askInputValue);
+    console.log({ aiAnswer });
+    setAiResponse(aiAnswer.aiResponse);
+    setRelevantDocuments(aiAnswer.relevantDocuments);
+    setGettingAiResponse(false);
+  };
 
-    setLoading(false);
+  const handleTeach = async () => {
+    const teachInputValue = teachInputRef.current?.value;
+    if (!teachInputValue) return;
+    teachInputRef.current.value = "";
+
+    setIsAiLearning(true);
+    const storedDocument = await storeAsEmbeddings(teachInputValue);
+    setIsAiLearning(false);
   };
 
   return (
-    <>
-      <InputWithRef ref={inputRef} />
-      <Button disabled={loading} onClick={handleClick}>
-        Run
-      </Button>
-      <output className="flex-center-1">
-        {aiResponse && aiResponse}
-      </output>
-    </>
+    <div className="space-y-4">
+      <div className="flex flex-col gap-4">
+        <InputWithRef
+          placeholder={gettingAiResponse ? "Thinking..." : "Ask me anything..."}
+          ref={askInputRef}
+        />
+        <Button onClick={handleAsk} disabled={gettingAiResponse}>
+          Ask
+        </Button>
+        <AutoAnimate>{aiResponse}</AutoAnimate>
+      </div>
+      <div className="flex flex-col gap-4">
+        <InputWithRef
+          placeholder={isAiLearning ? "Learning..." : "Teach me anything!"}
+          ref={teachInputRef}
+        />
+        <Button onClick={handleTeach} disabled={isAiLearning}>
+          Teach
+        </Button>
+      </div>
+    </div>
   );
 };
