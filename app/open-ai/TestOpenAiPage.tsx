@@ -14,17 +14,19 @@ export const TestOpenAiPage: React.FC = () => {
     setLoading(true);
     const aiResponse = await getChatCompletion(messages);
     setAiResponse(aiResponse);
-    setLoading(false);
+    setTimeout(() => {
+      setLoading(false);
+    }, 0);
   };
 
   // set userPrompt on submit
   const handleSubmit = (userPrompt: string) => {
-    if (!userPrompt) return;
     setUserPrompt(userPrompt);
   };
 
   // add userPrompt to messages when it changes
   useEffect(() => {
+    if (!userPrompt) return;
     setMessages((prev) => [
       ...prev,
       { message: userPrompt, author: "human", id: Math.random() },
@@ -33,6 +35,7 @@ export const TestOpenAiPage: React.FC = () => {
 
   // trigger getAiResponse when messages change
   useEffect(() => {
+    if (!messages.length) return;
     const lastMessage = messages.at(-1);
     // don't trigger if last message was from ai
     if (lastMessage?.author === "ai") return;
@@ -41,6 +44,7 @@ export const TestOpenAiPage: React.FC = () => {
 
   // add aiResponse to messages when it changes
   useEffect(() => {
+    if (!aiResponse) return;
     setMessages((prev) => [
       ...prev,
       { message: aiResponse, author: "ai", id: Math.random() },

@@ -20,13 +20,13 @@ export default function RootLayout({
 }) {
   const [sidebarHidden, setSidebarHidden] = useState(true);
   const [navbarHidden, setNavbarHidden] = useState(false);
-  const [viewportSize, setViewableArea] = useState<ViewableArea>();
+  // const [viewportSize, setViewableArea] = useState<ViewableArea>();
 
-  const handleResize = () => {
-    const width = window.innerWidth;
-    const height = window.innerHeight;
-    setViewableArea({ width, height });
-  };
+  // const handleResize = () => {
+  //   const width = window.innerWidth;
+  //   const height = window.innerHeight;
+  //   setViewableArea({ width, height });
+  // };
 
   const handleKeyPress = (e: KeyboardEvent) => {
     // close the sidebar using 'esc'
@@ -49,7 +49,7 @@ export default function RootLayout({
   };
 
   useEffect(() => {
-    window.addEventListener("resize", handleResize);
+    // window.addEventListener("resize", handleResize);
     document.addEventListener("keydown", handleKeyPress);
     document.addEventListener("scroll", handleScroll);
 
@@ -58,15 +58,18 @@ export default function RootLayout({
     }, 3000);
 
     return () => {
-      window.removeEventListener("resize", handleResize);
+      // window.removeEventListener("resize", handleResize);
       document.removeEventListener("keypress", handleKeyPress);
+      document.removeEventListener("scroll", handleScroll);
+
     };
+    
   }, []);
 
   return (
     <html lang="en" className="text-white bg-slate-900">
       <body
-        style={viewportSize}
+        // style={viewportSize}
         className={twMerge(
           inter.className,
           "px-4 h-[100dvh] !h-[100svh] overflow-hidden flex flex-col py-2"
