@@ -3,6 +3,8 @@ export const buttonClassName = [
   "flex",
   "items-center",
   "justify-center",
+  "w-full",
+  "min-h-[38px]",
   // normal
   "bg-white",
   "hover:bg-black",
