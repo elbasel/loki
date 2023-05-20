@@ -1,4 +1,4 @@
-import React, { useRef, ChangeEvent } from "react";
+import React, { useRef, ChangeEvent, forwardRef } from "react";
 import { twMerge } from "tailwind-merge";
 
 interface TextAreaProps {

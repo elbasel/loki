@@ -1,51 +1,50 @@
 "use client";
 import { useEffect, useState } from "react";
-import {
-  type Message,
-  getChatCompletion,
-} from "./actions";
+import { type Message, getChatCompletion } from "./actions";
 import { ChatWindow } from "@app/chat-window";
 
 export const TestOpenAiPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
-  const [aiResponse, setaiResponse] = useState("");
+  const [aiResponse, setAiResponse] = useState("");
   const [userPrompt, setUserPrompt] = useState("");
 
+  // helper function
   const getAiResponse = async (messages: Message[]) => {
     setLoading(true);
     const aiResponse = await getChatCompletion(messages);
-    setaiResponse(aiResponse);
+    setAiResponse(aiResponse);
     setLoading(false);
   };
 
+  // set userPrompt on submit
   const handleSubmit = (userPrompt: string) => {
     if (!userPrompt) return;
     setUserPrompt(userPrompt);
-    const newMessages: Message[] = [
-      ...messages,
-      { message: userPrompt, author: "human", id: 1 },
-    ];
-    setMessages(newMessages);
   };
 
+  // add userPrompt to messages when it changes
   useEffect(() => {
-    console.log({ userPrompt });
-    if (!userPrompt) return;
-    const newMessages: Message[] = [
-      ...messages,
+    setMessages((prev) => [
+      ...prev,
       { message: userPrompt, author: "human", id: Math.random() },
-    ];
-
-    getAiResponse(newMessages);
+    ]);
   }, [userPrompt]);
 
+  // trigger getAiResponse when messages change
   useEffect(() => {
-    const newMessages: Message[] = [
-      ...messages,
+    const lastMessage = messages.at(-1);
+    // don't trigger if last message was from ai
+    if (lastMessage?.author === "ai") return;
+    getAiResponse(messages);
+  }, [messages]);
+
+  // add aiResponse to messages when it changes
+  useEffect(() => {
+    setMessages((prev) => [
+      ...prev,
       { message: aiResponse, author: "ai", id: Math.random() },
-    ];
-    setMessages(newMessages);
+    ]);
   }, [aiResponse]);
 
   return (
