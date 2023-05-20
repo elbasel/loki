@@ -1,4 +1,6 @@
 "use server";
+import { kv } from "@vercel/kv";
+
 import { ChatOpenAI } from "langchain/chat_models/openai";
 import {
   AIChatMessage,
@@ -38,6 +40,9 @@ export const getChatCompletionOnce = async (prompt: string) => {
 
 export const getChatCompletion = async (messages: Message[]) => {
   console.log(messages);
+  const currentTime: string = new Date().toISOString();
+  await kv.set(currentTime, JSON.stringify(messages));
+
   const chat = new ChatOpenAI();
   const response = await chat.call(
     messages.map((message) =>
