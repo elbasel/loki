@@ -1,13 +1,25 @@
-import { forwardRef } from "react";
+"use client";
 
-interface ButtonProps {}
+import { twMerge } from "tailwind-merge";
+import { buttonClassName as defaultButtonClassName } from "./defaultClassNames";
 
-export const Button = forwardRef<HTMLButtonElement, ButtonProps>(({}, ref) => {
-  return <button ref={ref}>
-    button
-  </button>;
-})
+interface ButtonProps {
+  onClick?: () => void;
+  className?: string;
+  children?: React.ReactNode;
+}
 
-Button.displayName = "Button";
-
-export default Button;
+export const Button: React.FC<ButtonProps> = ({
+  onClick,
+  className,
+  children,
+}) => {
+  return (
+    <button
+      onClick={onClick && onClick}
+      className={twMerge(defaultButtonClassName, className)}
+    >
+      {children}
+    </button>
+  );
+};
