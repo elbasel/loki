@@ -1,5 +1,4 @@
 "use server";
-import { kv } from "@vercel/kv";
 
 import { ChatOpenAI } from "langchain/chat_models/openai";
 import {
@@ -12,7 +11,7 @@ import { CheerioWebBaseLoader } from "langchain/document_loaders/web/cheerio";
 export interface Message {
   id: number;
   message: string;
-  author: "human" | "ai";
+  author: "human" | "ai" | "system";
 }
 
 // example action
@@ -25,6 +24,8 @@ export interface Message {
 //   return openAiKey;
 // };
 
+const openAiChatModel = new ChatOpenAI();
+
 export const loadUrl = async (url: string) => {
   const loader = new CheerioWebBaseLoader(url);
   const docs = await loader.load();
@@ -33,23 +34,26 @@ export const loadUrl = async (url: string) => {
 };
 
 export const getChatCompletionOnce = async (prompt: string) => {
-  const chat = new ChatOpenAI();
-  const response = await chat.call([new HumanChatMessage(prompt)]);
+  const response = await openAiChatModel.call([new HumanChatMessage(prompt)]);
   return response.text;
 };
 
 export const getChatCompletion = async (messages: Message[]) => {
   console.log(messages);
-  const currentTime: string = new Date().toISOString();
-  await kv.set(currentTime, JSON.stringify(messages));
-
   const chat = new ChatOpenAI();
   const response = await chat.call(
-    messages.map((message) =>
-      message.author === "human"
-        ? new HumanChatMessage(message.message)
-        : new AIChatMessage(message.message)
-    )
+    messages.map((message) => {
+      switch (message.author) {
+        case "human":
+          return new HumanChatMessage(message.message);
+        case "ai":
+          return new AIChatMessage(message.message);
+        case "system":
+          return new SystemChatMessage(message.message);
+        default:
+          throw new Error(`Invalid message author: ${message.author}`);
+      }
+    })
   );
   return response.text;
 };

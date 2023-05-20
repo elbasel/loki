@@ -1,6 +1,8 @@
 "use client";
 
+import { twMerge } from "tailwind-merge";
 import { withRef } from "./withRef";
+import { inputClassName as defaultInputClassName } from "./defaultClassNames";
 
 interface InputProps {
   value?: string;
@@ -10,7 +12,7 @@ interface InputProps {
   placeholder?: string;
   required?: boolean;
   forwardedRef?: React.Ref<HTMLInputElement>;
-}  
+}
 
 export const Input: React.FC<InputProps> = (props) => {
   const {
@@ -27,7 +29,7 @@ export const Input: React.FC<InputProps> = (props) => {
     <input
       required={required}
       ref={forwardedRef && forwardedRef}
-      className={className}
+      className={twMerge(defaultInputClassName, className)}
       placeholder={placeholder || "Type something..."}
       onChange={(e) => onChange && onChange(e.target.value)}
       value={value}
