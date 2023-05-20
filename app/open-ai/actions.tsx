@@ -1,6 +1,10 @@
 "use server";
 import { ChatOpenAI } from "langchain/chat_models/openai";
-import { AIChatMessage, HumanChatMessage, SystemChatMessage } from "langchain/schema";
+import {
+  AIChatMessage,
+  HumanChatMessage,
+  SystemChatMessage,
+} from "langchain/schema";
 import { CheerioWebBaseLoader } from "langchain/document_loaders/web/cheerio";
 
 export interface Message {
@@ -33,6 +37,7 @@ export const getChatCompletionOnce = async (prompt: string) => {
 };
 
 export const getChatCompletion = async (messages: Message[]) => {
+  console.log(messages);
   const chat = new ChatOpenAI();
   const response = await chat.call(
     messages.map((message) =>
