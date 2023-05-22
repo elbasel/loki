@@ -7,7 +7,7 @@ import { useRef, useState } from "react";
 export const TestSupabase: React.FC = () => {
   const [gettingAiResponse, setGettingAiResponse] = useState(false);
   const [aiResponse, setAiResponse] = useState("");
-  const [relevantDocuments, setRelevantDocuments] = useState<string[]>();
+  // const [relevantDocuments, setRelevantDocuments] = useState<string[]>();
 
   const [isAiLearning, setIsAiLearning] = useState(false);
 
@@ -23,7 +23,7 @@ export const TestSupabase: React.FC = () => {
     const aiAnswer = await getContextualAiResponse(askInputValue);
     console.log({ aiAnswer });
     setAiResponse(aiAnswer.aiResponse);
-    setRelevantDocuments(aiAnswer.relevantDocuments);
+    // setRelevantDocuments(aiAnswer.relevantDocuments);
     setGettingAiResponse(false);
   };
 
