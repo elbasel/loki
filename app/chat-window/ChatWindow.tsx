@@ -1,6 +1,6 @@
 "use client";
 
-import { AutoAnimate } from "@app/UI";
+import { AutoAnimate, Output } from "@app/UI";
 import { Loader } from "@app/loader";
 import { Fragment, useEffect, useRef, useState } from "react";
 import { ChatMessage, type ChatMessageProps } from "./ChatMessage";
@@ -63,8 +63,10 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
   }, []);
 
   useEffect(() => {
-    if (!outputRef.current) return;
-    const outputElement = outputRef.current as HTMLOutputElement;
+    const outputElement = document.querySelector(
+      "#chat-window-output"
+    ) as HTMLDivElement;
+    if (!outputElement) return;
     // defer scrolling to after UI update
     setTimeout(() => {
       outputElement.scroll({
@@ -75,9 +77,12 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
   }, [messages]);
 
   return (
-    <form action={handleSubmit}>
-      <output
-        ref={outputRef}
+    <form
+      action={handleSubmit}
+      className="max-h-[100svh] overflow-y-auto"
+    >
+      <Output
+        id="chat-window-output"
         className="mt-auto overflow-y-auto scrollbar-thin"
       >
         <AutoAnimate className="flex flex-col gap-2">
@@ -92,8 +97,8 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
             </Fragment>
           ))}
         </AutoAnimate>
-      </output>
-      <div className="relative flex w-full gap-2 mt-4">
+      </Output>
+      <div className="relative flex w-full gap-2 p-2">
         <TextArea
           // TODO: forward this ref to the textarea
           // ref={textAreaRef}

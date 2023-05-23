@@ -13,15 +13,15 @@ export const getRecursiveAiResponse = async (
   const aiResponse = await getChatCompletionFromText(
     `use text="${context}" to answer '${query}', consider the previous text between quotes to be absolutely true and don't use any information that wasn't provided.`
   );
-  // const allSupaBaseDocs = await getAllSupabaseDocs();
-  // // const aiResponseWithAllDocs = await getChatCompletionFromText(
-  // //   `use '${allSupaBaseDocs.join(
-  // //     " "
-  // //   )}' to answer '${query}', format your answer as a reply in a chat.`
-  // // );
+  const allSupaBaseDocs = await getAllSupabaseDocs();
+  const aiResponseWithAllDocs = await getChatCompletionFromText(
+    `use '${allSupaBaseDocs.join(". ")}' to answer '${query}'`
+  );
 
-  // console.log({ context, aiResponseWithAllDocs, aiResponse, allSupaBaseDocs });
-  // return aiResponseWithAllDocs;
+  if (aiResponseWithAllDocs.toLocaleLowerCase().includes("sorry"))
+    return aiResponse;
+  console.log({ context, aiResponseWithAllDocs, aiResponse, allSupaBaseDocs });
+  return aiResponseWithAllDocs;
   console.log({ aiResponse, context });
   return aiResponse;
   if (currentDepth === 2 || currentDepth > _MAX_RECURSION_DEPTH) {
