@@ -4,10 +4,11 @@ import { useRef, useState } from "react";
 import { AutoAnimate, Button, InputWithRef } from "@app/UI";
 import {
   ContextualAiResponse,
+  getAllSupabaseDocs,
   getContextualAiResponse,
   storeAsEmbeddings,
 } from "@app/supabase";
-import { getChatCompletionFromText } from "@app/open-ai/actions";
+import { _getChatCompletionFromText } from "@app/open-ai/actions";
 
 export const TestSupabase: React.FC = () => {
   const [gettingAiResponse, setGettingAiResponse] = useState(false);
@@ -27,7 +28,7 @@ export const TestSupabase: React.FC = () => {
       askInput.value
     );
     if (aiAnswer.relevantDocuments.length === 0 && teachInputRef.current) {
-      const aiQuestion = await getChatCompletionFromText(
+      const aiQuestion = await _getChatCompletionFromText(
         `provide a placeholder for an input field with information about a users's query: '${askInput.value}', the placeholder should be descriptive of the expected input and should be aimed to provide all the data needed for an ai language model to answer the users's query`
       );
       teachInputRef.current.placeholder = aiQuestion;
@@ -85,6 +86,18 @@ export const TestSupabase: React.FC = () => {
             Teach
           </Button>
         </div>
+      </div>
+      <div className="all-docs">
+        {(async () => {
+          const allDocs = await getAllSupabaseDocs();
+          return (
+            <AutoAnimate>
+              {allDocs.map((d) => (
+                <li key={d}>{d}</li>
+              ))}
+            </AutoAnimate>
+          );
+        })()}
       </div>
     </main>
   );

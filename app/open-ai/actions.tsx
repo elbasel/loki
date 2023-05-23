@@ -100,7 +100,7 @@ export const _getChatCompletion = async (
   return newMessage;
 };
 
-export const getChatCompletionFromText = async (text: string) => {
+export const _getChatCompletionFromText = async (text: string) => {
   const messagesArray: _Message[] = [
     {
       id: Math.random(),

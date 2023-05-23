@@ -1,10 +1,5 @@
-import { getChatCompletionFromText } from "@app/open-ai/actions";
-import { createClient } from "@supabase/supabase-js";
-
-const _SUPABASE_CLIENT = createClient(
-  process.env.SUPABASE_URL || "",
-  process.env.SUPABASE_PRIVATE_KEY || ""
-);
+import { getChatCompletionFromText } from "@app/open-ai";
+import { getAllSupabaseDocs } from "@app/supabase";
 
 const _MAX_RECURSION_DEPTH = 2;
 
@@ -30,16 +25,10 @@ export const getRecursiveAiResponse = async (
     aiResponse.toLocaleLowerCase().includes("no-info")
   ) {
     // use all documents in the database as context
-    const supabaseResponseAllDocs = await _SUPABASE_CLIENT
-      .from("documents")
-      .select();
-    if (supabaseResponseAllDocs.error) throw supabaseResponseAllDocs.error;
-    const allSupaBaseDocs: any[] = supabaseResponseAllDocs.data;
-
-    const fallbackContext = [...allSupaBaseDocs.map((d) => d.content)];
+    const allSupaBaseDocs = await getAllSupabaseDocs();
     return await getRecursiveAiResponse(
       query,
-      fallbackContext,
+      allSupaBaseDocs,
       currentDepth + 1
     );
   }

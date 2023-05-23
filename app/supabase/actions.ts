@@ -3,7 +3,7 @@
 import { OpenAIEmbeddings } from "langchain/embeddings/openai";
 import { SupabaseHybridSearch } from "langchain/retrievers/supabase";
 import { ChatOpenAI } from "langchain/chat_models/openai";
-import { getChatCompletionFromText } from "@app/open-ai/actions";
+import { _getChatCompletionFromText } from "@app/open-ai/actions";
 import { createClient } from "@supabase/supabase-js";
 // should be global, not scoped to supabase
 import { PromptGenerator, promptTemplates } from "./prompts";
@@ -51,7 +51,7 @@ const _getMostImportantKeywords = async (text: string): Promise<string[]> => {
   const prompt: string = generatePrompt({
     text,
   });
-  const aiResponse = await getChatCompletionFromText(prompt);
+  const aiResponse = await _getChatCompletionFromText(prompt);
   const keywords = aiResponse.split(", ");
   const isValidKeyWords = keywords.length > 0 && keywords.length <= 10;
   if (!isValidKeyWords) {
@@ -106,7 +106,7 @@ const _insertDocument = async (
   return "success";
 };
 
-const _getRelevantDocs = async (input: string): Promise<string[]> => {
+export const _getRelevantDocs = async (input: string): Promise<string[]> => {
   const relevantDocsSet: Set<string> = new Set();
   const relevantDocsPromiseList: Promise<void>[] = [];
   const trimmedInput = input.trim().replaceAll("\n", " ");
@@ -156,4 +156,10 @@ const _getRelevantDocs = async (input: string): Promise<string[]> => {
   // if (relevantDocsArray.length === 0) {
   // }
   return relevantDocsArray;
+};
+
+export const _getAllSupabaseDocs = async (): Promise<string[]> => {
+  const response = await _SUPABASE_CLIENT.from("documents").select();
+  if (response.error) throw response.error;
+  return response.data.map((d: any) => d.content);
 };
