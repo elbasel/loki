@@ -7,7 +7,7 @@ import { _getChatCompletionFromText } from "@app/open-ai/actions";
 import { createClient } from "@supabase/supabase-js";
 // should be global, not scoped to supabase
 import { PromptGenerator, promptTemplates } from "./prompts";
-import { getRecursiveAiResponse as _getRecursiveAiResponse } from "./util/getRecursiveAiResponse";
+import { getRecursiveAiResponse as _getRecursiveAiResponse } from "./getRecursiveAiResponse";
 
 // !! import { revalidatePath } from "next/cache";
 
