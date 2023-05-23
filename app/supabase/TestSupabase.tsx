@@ -61,13 +61,13 @@ export const TestSupabase: React.FC = () => {
             Ask
           </Button>
           <AutoAnimate>{aiResponse}</AutoAnimate>
-          <ul>
+          {/* <ul>
             <AutoAnimate>
               {relevantDocs?.map((d) => (
                 <li key={d}>{d}</li>
               ))}
             </AutoAnimate>
-          </ul>
+          </ul> */}
         </div>
         <div className="flex flex-col gap-4 teach-ai">
           <InputWithRef
