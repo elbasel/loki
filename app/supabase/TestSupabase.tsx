@@ -1,16 +1,14 @@
 "use client";
 
 import { AutoAnimate, Button, InputWithRef } from "@app/UI";
-import { getContextualAiResponse, storeAsEmbeddings } from "./actions";
 import { useRef, useState } from "react";
+import { getContextualAiResponse } from "@app/supabase";
 
 export const TestSupabase: React.FC = () => {
   const [gettingAiResponse, setGettingAiResponse] = useState(false);
   const [aiResponse, setAiResponse] = useState("");
-  // const [relevantDocuments, setRelevantDocuments] = useState<string[]>();
-
   const [isAiLearning, setIsAiLearning] = useState(false);
-
+  // const [relevantDocuments, setRelevantDocuments] = useState<string[]>();
   const askInputRef = useRef<HTMLInputElement>(null);
   const teachInputRef = useRef<HTMLInputElement>(null);
 
@@ -18,10 +16,8 @@ export const TestSupabase: React.FC = () => {
     const askInputValue = askInputRef.current?.value;
     if (!askInputValue) return;
     askInputRef.current.value = "";
-
     setGettingAiResponse(true);
     const aiAnswer = await getContextualAiResponse(askInputValue);
-    console.log({ aiAnswer });
     setAiResponse(aiAnswer.aiResponse);
     // setRelevantDocuments(aiAnswer.relevantDocuments);
     setGettingAiResponse(false);
@@ -31,9 +27,8 @@ export const TestSupabase: React.FC = () => {
     const teachInputValue = teachInputRef.current?.value;
     if (!teachInputValue) return;
     teachInputRef.current.value = "";
-
     setIsAiLearning(true);
-    const storedDocument = await storeAsEmbeddings(teachInputValue);
+    const storedDocument = await _storeAsEmbeddings(teachInputValue);
     setIsAiLearning(false);
   };
 

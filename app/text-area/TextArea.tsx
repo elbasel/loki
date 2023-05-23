@@ -7,6 +7,7 @@ interface TextAreaProps {
   name?: string;
   className?: string;
   required?: boolean;
+  id?: string;
 }
 
 export const TextArea: React.FC<TextAreaProps> = ({
@@ -15,6 +16,7 @@ export const TextArea: React.FC<TextAreaProps> = ({
   name,
   className,
   required,
+  id,
 }) => {
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -44,6 +46,7 @@ export const TextArea: React.FC<TextAreaProps> = ({
       rows={1}
       value={value}
       name={name}
+      id={id}
     />
   );
 };

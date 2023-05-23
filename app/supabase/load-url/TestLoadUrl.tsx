@@ -1,46 +1,67 @@
 "use client";
 
 import { Button, InputWithRef, Output } from "@app/UI";
-import { type UrlInfo as UrlInfo, loadUrl } from "@app/open-ai/actions";
-import { useEffect, useRef, useState } from "react";
+import { UrlInfo, type Message, loadUrl } from "@app/open-ai";
+import { useCallback, useRef, useState } from "react";
 
-type _ClientStatus = "idle" | "loading" | "success" | "warning" | "error";
+const _getUrlInfo = async (url: string) => {
+  //  the server returns an array of UrlInfo objects
+  const urlInfoArray: UrlInfo[] = await loadUrl(url);
+  if (urlInfoArray.length > 1) {
+    console.error({ infoArray: urlInfoArray });
+    throw new Error("server returned more than one UrlInfo object");
+  }
+
+  const urlInfo: UrlInfo = urlInfoArray[0];
+
+  return urlInfo;
+};
 
 export const TestLoadUrl: React.FC = () => {
   const inputRef = useRef<any>();
-  const [serverResponse, setServerResponse] = useState<UrlInfo[]>();
-  const [clientStatus, setClientStatus] = useState<_ClientStatus>("idle");
-  const [urlToLoad, setUrlToLoad] = useState<string>("");
   const [urlInfo, setUrlInfo] = useState<UrlInfo>();
 
-  const getUrlInfo = async (urlToLoad: string) => {
-    const serverResponse: UrlInfo[] = await loadUrl(urlToLoad);
-    const doc: UrlInfo = serverResponse[0];
+  // get the url info on submit
+  type _ServerResponse = "success" | "error";
+  const handleSubmit = useCallback(async (): Promise<_ServerResponse> => {
+    const url = inputRef.current.value;
+    if (!url) {
+      console.warn("form submitted with empty ur", { url });
+      return "error";
+    }
 
-    return doc;
-  };
-
-  const handleUrlChange = () => {
-
-   if (!urlToLoad) return setClientStatus("idle");
-    setClientStatus("loading");
-    const urlInfo: UrlInfo = getUrlInfo(urlToLoad);
-
-   
-  };
-  useEffect(() => {}, [urlToLoad]);
+    const urlInfo: UrlInfo = await _getUrlInfo(url);
+    setUrlInfo(urlInfo);
+    return "success";
+  }, []);
 
   return (
     <main>
       <h1>Test Load Url</h1>
       <InputWithRef ref={inputRef} />
-      <Button
-        onClick={() => setUrlToLoad(inputRef.current?.value)}
-        type="submit"
-      >
+      <Button onClick={handleSubmit} type="submit">
         Load URL into Long term ai memory
       </Button>
-      <Output></Output>
+      <Output>
+        <table>
+          <tr>
+            <thead>Site:</thead>
+            <td>
+              <a target="_blank" href={urlInfo?.url}>
+                {urlInfo?.title}
+              </a>
+            </td>
+          </tr>
+          <tr>
+            <thead>Url:</thead>
+            <td>
+              <a target="_blank" href={urlInfo?.url}>
+                {urlInfo?.url}
+              </a>
+            </td>
+          </tr>
+        </table>
+      </Output>
     </main>
   );
 };

@@ -9,10 +9,12 @@ interface ButtonProps {
   className?: string;
   children?: React.ReactNode;
   disabled?: boolean;
+  type?: "submit" | "reset" | "button";
 }
 
 export const Button: React.FC<ButtonProps> = ({
   onClick,
+  type = "button",
   className,
   children,
   disabled,
@@ -22,6 +24,7 @@ export const Button: React.FC<ButtonProps> = ({
       disabled={disabled}
       onClick={onClick && onClick}
       className={twMerge(defaultButtonClassName, className)}
+      type={type}
     >
       {disabled ? <Loader /> : children}
     </button>

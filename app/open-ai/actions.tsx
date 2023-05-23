@@ -1,59 +1,105 @@
 "use server";
 
+// model
 import { ChatOpenAI } from "langchain/chat_models/openai";
 import {
   AIChatMessage,
   HumanChatMessage,
   SystemChatMessage,
+  type BaseChatMessage,
 } from "langchain/schema";
+// web scraper
 import { CheerioWebBaseLoader } from "langchain/document_loaders/web/cheerio";
+import * as cheerio from "cheerio";
 
-export interface Message {
-  id: number;
-  message: string;
-  author: "human" | "ai" | "system";
-}
+const _CHAT_OPEN_AI = new ChatOpenAI();
 
-// example action
-// export const getServerOpenAiKey = (): string => {
-//   const openAiKey = process.env.OPENAI_API_KEY;
-//   if (!openAiKey) {
-//     throw new Error("OPENAI_API_KEY is not defined");
-//   }
-//   console.log({ openAiKey });
-//   return openAiKey;
-// };
+// helpers
+const _getPageTitle = (html: string): string => {
+  const $ = cheerio.load(html);
+  const pageTitle = $("title").text();
 
-const openAiChatModel = new ChatOpenAI();
+  return pageTitle;
+};
 
-export const loadUrl = async (url: string) => {
+const _getLangChainMessage = (message: _Message): BaseChatMessage => {
+  const messageAuthor = message.author;
+  switch (messageAuthor) {
+    case "human":
+      return new HumanChatMessage(message.text);
+    case "ai":
+      return new AIChatMessage(message.text);
+    case "system":
+      return new SystemChatMessage(message.text);
+    default:
+      return new SystemChatMessage(message.text);
+  }
+};
+
+// load url
+export type _UrlInfo = {
+  url: string;
+  title: string;
+  html: string;
+};
+type _CheerioDoc = {
+  pageContent: string;
+  metadata: {};
+};
+export const _loadUrl = async (url: string): Promise<_UrlInfo[]> => {
+  const urlInfo: _UrlInfo[] = [];
   const loader = new CheerioWebBaseLoader(url);
-  const docs = await loader.load();
+  const cheerioDocs: _CheerioDoc[] = await loader.load();
+  cheerioDocs.forEach((d) => {
+    urlInfo.push({
+      url,
+      title: _getPageTitle(d.pageContent),
+      html: d.pageContent,
+    });
+  });
 
-  return docs;
+  return urlInfo;
 };
 
-export const getChatCompletionOnce = async (prompt: string) => {
-  const response = await openAiChatModel.call([new HumanChatMessage(prompt)]);
-  return response.text;
+// chat with ai
+export type _Message = {
+  id: number;
+  text: string;
+  author: "human" | "ai" | "system";
 };
+export const _getChatCompletion = async (
+  messages: _Message[]
+): Promise<_Message> => {
+  const langchainMessages: BaseChatMessage[] = [];
 
-export const getChatCompletion = async (messages: Message[]) => {
-  console.log(messages);
-  const chat = new ChatOpenAI();
-  const response = await chat.call(
-    messages.map((message) => {
-      switch (message.author) {
-        case "human":
-          return new HumanChatMessage(message.message);
-        case "ai":
-          return new AIChatMessage(message.message);
-        case "system":
-          return new SystemChatMessage(message.message);
-        default:
-          throw new Error(`Invalid message author: ${message.author}`);
-      }
-    })
+  messages.forEach((msg: _Message) => {
+    const langchainMessage: BaseChatMessage = _getLangChainMessage(msg);
+    langchainMessages.push(langchainMessage);
+  });
+
+  const newLangChainMessage: BaseChatMessage = await _CHAT_OPEN_AI.call(
+    langchainMessages
   );
-  return response.text;
+  const newMessage: _Message = {
+    // TODO: use uuid
+    id: Math.random(),
+    text: newLangChainMessage.text,
+    author: "ai",
+  };
+
+  return newMessage;
+};
+
+export const getChatCompletionFromText = async (text: string) => {
+  const messagesArray: _Message[] = [
+    {
+      id: Math.random(),
+      author: "system",
+      text,
+    },
+  ];
+
+  const newAiMessage: _Message = await _getChatCompletion(messagesArray);
+
+  return newAiMessage.text;
 };

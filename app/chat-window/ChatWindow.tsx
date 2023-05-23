@@ -7,12 +7,12 @@ import { ChatMessage, type ChatMessageProps } from "./ChatMessage";
 import { twMerge } from "tailwind-merge";
 import { RiSendPlaneLine } from "react-icons/ri";
 import { TextArea } from "@app/text-area";
-import { Message } from "@app/open-ai/actions";
+import { _Message } from "@app/open-ai/actions";
 
 interface ChatWindowProps {
   onSubmit: (userPrompt: string) => any;
   loading: boolean;
-  messages: Message[];
+  messages: _Message[];
 }
 export const ChatWindow: React.FC<ChatWindowProps> = ({
   onSubmit,
@@ -34,12 +34,23 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
     if (!textAreaElem) return;
     textAreaElem.value = "";
     textAreaElem.textContent = "";
-    setFormValidationEnabled(false)
+    setFormValidationEnabled(false);
   };
 
   const handleKeyPress = (e: KeyboardEvent) => {
     if (e.key === "Enter" && e.ctrlKey) {
       // submit the form
+      const textAreaElem = document.querySelector(
+        "#chat-window-text-area"
+      ) as HTMLTextAreaElement;
+      const submitButton: HTMLButtonElement | null = document.querySelector(
+        "#chat-window-submit-button"
+      );
+      if (!submitButton) {
+        console.log({ textAreaElem, submitButton });
+        throw new Error("no submit button found");
+      }
+      submitButton.click();
     }
   };
 
@@ -54,14 +65,17 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
   useEffect(() => {
     if (!outputRef.current) return;
     const outputElement = outputRef.current as HTMLOutputElement;
-    outputElement.scroll({
-      top: outputElement.scrollHeight + 99,
-      behavior: "smooth",
-    });
+    // defer scrolling to after UI update
+    setTimeout(() => {
+      outputElement.scroll({
+        top: outputElement.scrollHeight,
+        behavior: "smooth",
+      });
+    }, 100);
   }, [messages]);
 
   return (
-    <>
+    <form action={handleSubmit}>
       <output
         ref={outputRef}
         className="mt-auto overflow-y-auto scrollbar-thin"
@@ -70,7 +84,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
           {messages.map((msg, i) => (
             <Fragment key={i}>
               <ChatMessage
-                message={msg.message}
+                message={msg.text}
                 className={twMerge(
                   msg.author === "human" && "flex-row-reverse"
                 )}
@@ -79,22 +93,27 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
           ))}
         </AutoAnimate>
       </output>
-      <form className="relative flex w-full gap-2 mt-4" action={handleSubmit}>
+      <div className="relative flex w-full gap-2 mt-4">
         <TextArea
           // TODO: forward this ref to the textarea
           // ref={textAreaRef}
           required={formValidationEnabled}
+          id="chat-window-text-area"
           name="user-prompt"
           className={twMerge(
             "pr-11 max-h-64",
             formValidationEnabled && "invalid:!ring-2 invalid:!ring-red-700"
           )}
         />
-        <button type="submit" className="flex items-center flex-1">
+        <button
+          id="chat-window-submit-button"
+          type="submit"
+          className="flex items-center flex-1"
+        >
           {loading ? <Loader /> : <RiSendPlaneLine className="flex-1" />}
         </button>
-      </form>
-    </>
+      </div>
+    </form>
   );
 };
 export default ChatWindow;
