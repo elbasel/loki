@@ -2,7 +2,7 @@ import { twMerge } from "tailwind-merge";
 
 export interface ChatMessageProps {
   id?: number;
-  message: string;
+  message?: string;
   author?: "user" | "ai";
   className?: string;
 }

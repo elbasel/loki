@@ -86,7 +86,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
           {messages.map((msg, i) => (
             <Fragment key={i}>
               <ChatMessage
-                message={msg.text}
+                message={msg?.text}
                 className={twMerge(
                   msg.author === "human" && "flex-row-reverse"
                 )}
