@@ -39,7 +39,7 @@ export const TestOpenAiPage: React.FC = () => {
           setLoading(true);
           setTimeout(() => {
             handleSubmit(v);
-          }, 1000);
+          }, 0);
           setLoading(false);
         }}
         messages={messages}
