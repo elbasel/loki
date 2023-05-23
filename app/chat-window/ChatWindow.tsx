@@ -73,16 +73,16 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
         top: outputElement.scrollHeight,
         behavior: "smooth",
       });
-    }, 800);
+    },300);
   }, [messages]);
 
   return (
     <form action={handleSubmit} className="max-h-[100svh] overflow-y-auto">
       <Output
         id="chat-window-output"
-        className="mt-auto mb-4 overflow-y-auto scrollbar-thin"
+        className="flex flex-col gap-2 mt-auto mb-4 overflow-y-auto scrollbar-thin"
       >
-        <AutoAnimate className="flex flex-col gap-2">
+        {/* <AutoAnimate className="flex flex-col gap-2"> */}
           {messages.map((msg, i) => (
             <Fragment key={i}>
               <ChatMessage
@@ -93,7 +93,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
               />
             </Fragment>
           ))}
-        </AutoAnimate>
+        {/* </AutoAnimate> */}
       </Output>
       <div className="relative flex w-full gap-2 p-2">
         <TextArea
