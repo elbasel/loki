@@ -7,14 +7,9 @@ import { getChatCompletionFromText } from "@app/open-ai/actions";
 import { createClient } from "@supabase/supabase-js";
 // should be global, not scoped to supabase
 import { PromptGenerator, promptTemplates } from "./prompts";
+import { getRecursiveAiResponse as _getRecursiveAiResponse } from "./util/getRecursiveAiResponse";
 
-import { NextRequest } from "next/server";
-import { revalidatePath } from "next/cache";
-
-export async function GET(request: NextRequest) {
-  const path = request.nextUrl.href;
-  revalidatePath(path);
-}
+// !! import { revalidatePath } from "next/cache";
 
 // TODO: move to env
 // supabase
@@ -74,13 +69,44 @@ export type _ContextualAiResponse = {
 export const _getContextualAiResponse = async (
   input: string
 ): Promise<_ContextualAiResponse> => {
-  // this throws an error
-  // const c = cookies();
-  // console.log({ c });
-  const contextualResponse: _ContextualAiResponse = {
-    aiResponse: "",
-    relevantDocuments: [],
+  const relevantDocuments = await _getRelevantDocs(input);
+  const aiResponse: string = await _getRecursiveAiResponse(
+    input,
+    relevantDocuments
+  );
+
+  return {
+    aiResponse,
+    relevantDocuments,
   };
+};
+
+export const _storeAsEmbeddings = async (content: string, metadata?: any) => {
+  const embedding = await _OPEN_AI_EMBEDDINGS.embedQuery(content);
+
+  const supabaseResponse: "error" | "success" = await _insertDocument(
+    content,
+    embedding
+  );
+  if (supabaseResponse === "error")
+    throw new Error("Failed to insert document into supabase");
+  return supabaseResponse;
+};
+
+const _insertDocument = async (
+  content: string,
+  embedding: number[]
+): Promise<"error" | "success"> => {
+  const response = await _SUPABASE_CLIENT
+    .from("documents")
+    .insert([{ content, embedding }])
+    .select();
+
+  if (response.error) return "error";
+  return "success";
+};
+
+const _getRelevantDocs = async (input: string): Promise<string[]> => {
   const relevantDocsSet: Set<string> = new Set();
   const relevantDocsPromiseList: Promise<void>[] = [];
   const trimmedInput = input.trim().replaceAll("\n", " ");
@@ -93,9 +119,9 @@ export const _getContextualAiResponse = async (
   //
   // };
   const inputRelevantDocs = await _RETRIEVER.getRelevantDocuments(input);
-  // * only add the first relevant doc, since it's the most relevant
-  if (inputRelevantDocs[0])
-    relevantDocsSet.add(inputRelevantDocs[0].pageContent);
+  inputRelevantDocs.forEach((d) => {
+    relevantDocsSet.add(d.pageContent);
+  });
   const inputSplit = trimmedInput.split(" ");
   if (inputSplit.length === 0) throw new Error("Invalid input");
   if (inputSplit.length > _SUPABASE_REQUEST_LIMIT) {
@@ -125,56 +151,9 @@ export const _getContextualAiResponse = async (
       relevantDocsPromiseList.push(relevantDocPromise);
     }
     await Promise.all(relevantDocsPromiseList);
-    const aiHasNoContext = [...relevantDocsSet].length === 0;
-    if (aiHasNoContext)
-      return {
-        aiResponse: promptTemplates.noContextAvailable,
-        relevantDocuments: [],
-      };
   }
   const relevantDocsArray: string[] = [...relevantDocsSet];
-  if (relevantDocsArray.length === 0) {
-    const supabaseResponseAllDocs = await _SUPABASE_CLIENT
-      .from("documents")
-      .select();
-    if (supabaseResponseAllDocs.error) throw supabaseResponseAllDocs.error;
-    const allSupaBaseDocs: any[] = supabaseResponseAllDocs.data;
-    if (allSupaBaseDocs.length === 0) throw new Error("No docs in supabase");
-    allSupaBaseDocs.forEach((d) => {
-      relevantDocsArray.push(d.content);
-    });
-  }
-  const aiResponse = await getChatCompletionFromText(
-    `use '${relevantDocsArray.join(" ")}' to answer '${trimmedInput}'`
-  );
-  if (!aiResponse) throw new Error("empty ai response");
-  return {
-    aiResponse,
-    relevantDocuments: relevantDocsArray,
-  };
-};
-
-export const _storeAsEmbeddings = async (content: string, metadata?: any) => {
-  const embedding = await _OPEN_AI_EMBEDDINGS.embedQuery(content);
-
-  const supabaseResponse: "error" | "success" = await _insertDocument(
-    content,
-    embedding
-  );
-  if (supabaseResponse === "error")
-    throw new Error("Failed to insert document into supabase");
-  return supabaseResponse;
-};
-
-const _insertDocument = async (
-  content: string,
-  embedding: number[]
-): Promise<"error" | "success"> => {
-  const response = await _SUPABASE_CLIENT
-    .from("documents")
-    .insert([{ content, embedding }])
-    .select();
-
-  if (response.error) return "error";
-  return "success";
+  // if (relevantDocsArray.length === 0) {
+  // }
+  return relevantDocsArray;
 };
