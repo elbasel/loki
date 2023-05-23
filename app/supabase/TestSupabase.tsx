@@ -2,24 +2,24 @@
 
 import { AutoAnimate, Button, InputWithRef } from "@app/UI";
 import { useRef, useState } from "react";
-import { getContextualAiResponse } from "@app/supabase";
+import { getContextualAiResponse, storeAsEmbeddings } from "@app/supabase";
 
 export const TestSupabase: React.FC = () => {
   const [gettingAiResponse, setGettingAiResponse] = useState(false);
-  const [aiResponse, setAiResponse] = useState("");
   const [isAiLearning, setIsAiLearning] = useState(false);
-  // const [relevantDocuments, setRelevantDocuments] = useState<string[]>();
+
+  const [aiResponse, setAiResponse] = useState("");
+  //refs
   const askInputRef = useRef<HTMLInputElement>(null);
   const teachInputRef = useRef<HTMLInputElement>(null);
 
   const handleAsk = async () => {
-    const askInputValue = askInputRef.current?.value;
-    if (!askInputValue) return;
+    const askInput = askInputRef.current;
+    if (!askInput) return;
     askInputRef.current.value = "";
     setGettingAiResponse(true);
-    const aiAnswer = await getContextualAiResponse(askInputValue);
-    setAiResponse(aiAnswer.aiResponse);
-    // setRelevantDocuments(aiAnswer.relevantDocuments);
+    const aiAnswer = await getContextualAiResponse(askInput.value);
+    setAiResponse(aiAnswer?.aiResponse);
     setGettingAiResponse(false);
   };
 
@@ -28,12 +28,12 @@ export const TestSupabase: React.FC = () => {
     if (!teachInputValue) return;
     teachInputRef.current.value = "";
     setIsAiLearning(true);
-    const storedDocument = await _storeAsEmbeddings(teachInputValue);
+    const storedDocument = await storeAsEmbeddings(teachInputValue);
     setIsAiLearning(false);
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 ask-ai">
       <div className="flex flex-col gap-4">
         <InputWithRef
           placeholder={gettingAiResponse ? "Thinking..." : "Ask me anything..."}
@@ -44,7 +44,7 @@ export const TestSupabase: React.FC = () => {
         </Button>
         <AutoAnimate>{aiResponse}</AutoAnimate>
       </div>
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4 teach-ai">
         <InputWithRef
           placeholder={isAiLearning ? "Learning..." : "Teach me anything!"}
           ref={teachInputRef}
