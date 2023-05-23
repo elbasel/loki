@@ -9,6 +9,7 @@ interface ButtonProps {
   className?: string;
   children?: React.ReactNode;
   disabled?: boolean;
+  formAction?: (FormData: FormData) => void;
   type?: "submit" | "reset" | "button";
 }
 
@@ -18,6 +19,7 @@ export const Button: React.FC<ButtonProps> = ({
   className,
   children,
   disabled,
+  formAction,
 }) => {
   return (
     <button
@@ -25,6 +27,7 @@ export const Button: React.FC<ButtonProps> = ({
       onClick={onClick && onClick}
       className={twMerge(defaultButtonClassName, className)}
       type={type}
+      formAction={formAction && formAction}
     >
       {disabled ? <Loader /> : children}
     </button>

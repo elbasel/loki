@@ -31,6 +31,9 @@ export const TestSupabase: React.FC = () => {
         `provide a placeholder for an input field with information about a users's query: '${askInput.value}', the placeholder should be descriptive of the expected input and should be aimed to provide all the data needed for an ai language model to answer the users's query`
       );
       teachInputRef.current.placeholder = aiQuestion;
+    } else if (aiAnswer.relevantDocuments.length > 0 && teachInputRef.current) {
+      const aiQuestion = "Thank you!";
+      teachInputRef.current.placeholder = aiQuestion;
     }
     askInputRef.current.value = "";
 
