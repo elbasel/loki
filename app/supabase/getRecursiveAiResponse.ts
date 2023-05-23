@@ -8,19 +8,19 @@ export const getRecursiveAiResponse = async (
   contextArray: string[],
   currentDepth = 0
 ): Promise<string> => {
-  const context = contextArray.join(" ");
+  const context = contextArray.join(". ");
 
   const aiResponse = await getChatCompletionFromText(
-    `use '${context}' to answer '${query}', format your answer as a reply in a chat. if you need more information to answer the query, please respond only with 'no-info' and nothing else!`
+    `use '${context}' to answer '${query}', format your answer as a reply in a chat`
   );
   const allSupaBaseDocs = await getAllSupabaseDocs();
   const aiResponseWithAllDocs = await getChatCompletionFromText(
     `use '${allSupaBaseDocs.join(
       " "
-    )}' to answer '${query}', format your answer as a reply in a chat. if you need more information to answer the query, please respond only with 'no-info' and nothing else!`
+    )}' to answer '${query}', format your answer as a reply in a chat.`
   );
 
-  console.log({ context, aiResponseWithAllDocs, aiResponse });
+  console.log({ context, aiResponseWithAllDocs, aiResponse, allSupaBaseDocs });
   return aiResponseWithAllDocs;
   console.log({ aiResponse });
   if (currentDepth === 2 || currentDepth > _MAX_RECURSION_DEPTH) {

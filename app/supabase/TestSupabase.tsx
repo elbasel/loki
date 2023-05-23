@@ -88,18 +88,6 @@ export const TestSupabase: React.FC = () => {
           </Button>
         </div>
       </div>
-      <div className="all-docs">
-        {/* {(async () => {
-          const allDocs = await getAllSupabaseDocs();
-          return (
-            <AutoAnimate>
-              {allDocs.map((d) => (
-                <li key={d}>{d}</li>
-              ))}
-            </AutoAnimate>
-          );
-        })()} */}
-      </div>
     </main>
   );
 };
