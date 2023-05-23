@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 import { AutoAnimate, Button, InputWithRef } from "@app/UI";
 import {
   ContextualAiResponse,
-  getAllSupabaseDocs,
+  // getAllSupabaseDocs,
   getContextualAiResponse,
   storeAsEmbeddings,
 } from "@app/supabase";
@@ -27,15 +27,6 @@ export const TestSupabase: React.FC = () => {
     const aiAnswer: ContextualAiResponse = await getContextualAiResponse(
       askInput.value
     );
-    if (aiAnswer.relevantDocuments.length === 0 && teachInputRef.current) {
-      const aiQuestion = await _getChatCompletionFromText(
-        `provide a placeholder for an input field with information about a users's query: '${askInput.value}', the placeholder should be descriptive of the expected input and should be aimed to provide all the data needed for an ai language model to answer the users's query`
-      );
-      teachInputRef.current.placeholder = aiQuestion;
-    } else if (aiAnswer.relevantDocuments.length > 0 && teachInputRef.current) {
-      const aiQuestion = "Thank you!";
-      teachInputRef.current.placeholder = aiQuestion;
-    }
     askInputRef.current.value = "";
 
     setAiResponse(aiAnswer.aiResponse);
