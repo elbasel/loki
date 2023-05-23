@@ -11,6 +11,8 @@ import {
 // web scraper
 import { CheerioWebBaseLoader } from "langchain/document_loaders/web/cheerio";
 import * as cheerio from "cheerio";
+import { NextRequest } from "next/server";
+import { revalidatePath } from "next/cache";
 
 const _CHAT_OPEN_AI = new ChatOpenAI();
 

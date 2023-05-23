@@ -1,16 +1,20 @@
 "use server";
 
-import { cookies } from "next/headers";
-
 import { OpenAIEmbeddings } from "langchain/embeddings/openai";
-import { loadQARefineChain } from "langchain/chains";
 import { SupabaseHybridSearch } from "langchain/retrievers/supabase";
-import { createClient } from "@supabase/supabase-js";
 import { ChatOpenAI } from "langchain/chat_models/openai";
 import { getChatCompletionFromText } from "@app/open-ai/actions";
-// should be global
+import { createClient } from "@supabase/supabase-js";
+// should be global, not scoped to supabase
 import { PromptGenerator, promptTemplates } from "./prompts";
-import { Message, getChatCompletion } from "@app/open-ai";
+
+import { NextRequest } from "next/server";
+import { revalidatePath } from "next/cache";
+
+export async function GET(request: NextRequest) {
+  const path = request.nextUrl.href;
+  revalidatePath(path);
+}
 
 // TODO: move to env
 // supabase
@@ -70,8 +74,9 @@ export type _ContextualAiResponse = {
 export const _getContextualAiResponse = async (
   input: string
 ): Promise<_ContextualAiResponse> => {
-  const c = cookies();
-  console.log({ c });
+  // this throws an error
+  // const c = cookies();
+  // console.log({ c });
   const contextualResponse: _ContextualAiResponse = {
     aiResponse: "",
     relevantDocuments: [],
