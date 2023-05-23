@@ -8,6 +8,7 @@ import { ChatOpenAI } from "langchain/chat_models/openai";
 import { getChatCompletionFromText } from "@app/open-ai/actions";
 // should be global
 import { PromptGenerator, promptTemplates } from "./prompts";
+import { Message, getChatCompletion } from "@app/open-ai";
 
 // TODO: move to env
 // supabase
@@ -47,22 +48,46 @@ const _getMostImportantKeywords = async (text: string): Promise<string[]> => {
   return keywords;
 };
 
-export const _getContextualAiResponse = async (input: string) => {
+export type _ContextualAiResponse = {
+  aiResponse: string;
+  relevantDocuments: string[];
+};
+export const _getContextualAiResponse = async (
+  input: string
+): Promise<_ContextualAiResponse> => {
+  const contextualResponse: _ContextualAiResponse = {
+    aiResponse: "",
+    relevantDocuments: [],
+  };
   const relevantDocsSet: Set<string> = new Set();
-  const getRelevantDocsPromiseList = [];
-
+  const relevantDocsPromiseList: Promise<void>[] = [];
   const trimmedInput = input.trim().replaceAll("\n", " ");
+
+  //get relevant docs for the input as a whole
+  // !! TODO: only it's less than _USER_INPUT_LIMIT tokens....
+  // const tokenizer = new GPT3Tokenizer({ type: "gpt3" });
+  // const tokens = tokenizer.encode(input);
+  // if (tokens.length > _USER_INPUT_LIMIT) () => {
+  // * otherwise...
+  //
+  // };
+  const inputRelevantDocs = await _RETRIEVER.getRelevantDocuments(input);
+  // * only add the first relevant doc, since it's the most relevant
+  if (inputRelevantDocs[0])
+    relevantDocsSet.add(inputRelevantDocs[0].pageContent);
 
   const inputSplit = trimmedInput.split(" ");
   if (inputSplit.length === 0) throw new Error("Invalid input");
   if (inputSplit.length > _SUPABASE_REQUEST_LIMIT) {
     const keywords = await _getMostImportantKeywords(trimmedInput);
+    console.log({ keywords });
     if (keywords.length > 10) {
       console.log({ keywords });
       throw new Error("Too many keywords");
     }
     for (let index = 0; index < keywords.length; index++) {
       const word = keywords[index];
+      // resolved after adding relevant doc to set\\
       const relevantDocPromise = new Promise<void>(async (resolve, reject) => {
         setTimeout(async () => {
           try {
@@ -77,57 +102,63 @@ export const _getContextualAiResponse = async (input: string) => {
           }
         }, _SUPABASE_REQUEST_INTERVAL * index);
       });
-      getRelevantDocsPromiseList.push(relevantDocPromise);
+      relevantDocsPromiseList.push(relevantDocPromise);
     }
 
-    await Promise.all(getRelevantDocsPromiseList);
+    await Promise.all(relevantDocsPromiseList);
 
-    //also get relevant docs for the input as a whole
-    // !! TODO: if it's less than _USER_INPUT_LIMIT tokens.
-    // const tokenizer = new GPT3Tokenizer({ type: "gpt3" });
-    // const tokens = tokenizer.encode(input);
-    // if (tokens.length > _USER_INPUT_LIMIT) () => {};
-
-    const wholeInputRelevantDocs = await _RETRIEVER.getRelevantDocuments(input);
-    if (wholeInputRelevantDocs[0])
-      relevantDocsSet.add(wholeInputRelevantDocs[0].pageContent);
-
-    const queryContext = [...relevantDocsSet].join(" ");
-    const aiHasNoContext = queryContext.length === 0;
+    const aiHasNoContext = [...relevantDocsSet].length === 0;
 
     if (aiHasNoContext)
       return {
         aiResponse: promptTemplates.noContextAvailable,
         relevantDocuments: [],
       };
-
-    const chain = loadQARefineChain(_CHAT_OPEN_AI_MODEl);
-
-    const relevantDocsArray: string[] = [...relevantDocsSet];
-
-    const aiResponse = await chain.call({
-      input_documents: relevantDocsArray,
-      question: input,
-    });
-
-    return {
-      aiResponse: aiResponse.output_text,
-      relevantDocuments: relevantDocsArray,
-    };
   }
+
+  const relevantDocsArray: string[] = [...relevantDocsSet];
+
+  const messages: Message[] = [
+    {
+      id: Math.random(),
+      author: "system",
+      text: [...relevantDocsSet].join(" "),
+    },
+    {
+      id: Math.random(),
+      author: "human",
+      text: input,
+    },
+  ];
+  const aiResponse = await getChatCompletion(messages);
+  if (!aiResponse.text) throw new Error("empty ai response");
+  return {
+    aiResponse: aiResponse.text,
+    relevantDocuments: relevantDocsArray,
+  };
 };
 
 export const _storeAsEmbeddings = async (content: string, metadata?: any) => {
   const embedding = await _OPEN_AI_EMBEDDINGS.embedQuery(content);
 
-  const { data, error } = await _SUPABASE_CLIENT
+  const supabaseResponse: "error" | "success" = await _insertDocument(
+    content,
+    embedding
+  );
+  if (supabaseResponse === "error")
+    throw new Error("Failed to insert document into supabase");
+  return supabaseResponse;
+};
+
+const _insertDocument = async (
+  content: string,
+  embedding: number[]
+): Promise<"error" | "success"> => {
+  const response = await _SUPABASE_CLIENT
     .from("documents")
     .insert([{ content, embedding }])
     .select();
 
-  if (!data) {
-    throw Error(error?.message || "Server side error while inserting document");
-  }
-
-  return data;
+  if (response.error) return "error";
+  return "success";
 };

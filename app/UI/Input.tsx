@@ -12,6 +12,7 @@ interface InputProps {
   placeholder?: string;
   required?: boolean;
   id?: string;
+  disabled?: boolean;
   forwardedRef?: React.Ref<HTMLInputElement>;
 }
 
@@ -25,6 +26,7 @@ export const Input: React.FC<InputProps> = (props) => {
     placeholder,
     forwardedRef,
     id,
+    disabled,
   } = props;
 
   return (
@@ -37,6 +39,7 @@ export const Input: React.FC<InputProps> = (props) => {
       value={value}
       name={name}
       id={id}
+      disabled={disabled}
     />
   );
 };

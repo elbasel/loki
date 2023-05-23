@@ -26,13 +26,21 @@ const _getLangChainMessage = (message: _Message): BaseChatMessage => {
   const messageAuthor = message.author;
   switch (messageAuthor) {
     case "human":
-      return new HumanChatMessage(message.text);
+      const humanChatMessage = new HumanChatMessage(message.text);
+      humanChatMessage.name = "human";
+      return humanChatMessage;
     case "ai":
-      return new AIChatMessage(message.text);
+      const aiChatMessage = new AIChatMessage(message.text);
+      aiChatMessage.name = "ai";
+      return aiChatMessage;
     case "system":
-      return new SystemChatMessage(message.text);
+      const systemChatMessage = new SystemChatMessage(message.text);
+      systemChatMessage.name = "system";
+      return systemChatMessage;
     default:
-      return new SystemChatMessage(message.text);
+      const genericChatMessage = new SystemChatMessage(message.text);
+      genericChatMessage.name = "system";
+      return genericChatMessage;
   }
 };
 
@@ -100,6 +108,7 @@ export const getChatCompletionFromText = async (text: string) => {
   ];
 
   const newAiMessage: _Message = await _getChatCompletion(messagesArray);
+  if (!newAiMessage.text) throw new Error("no ai message returned");
 
   return newAiMessage.text;
 };

@@ -1,14 +1,19 @@
 "use client";
 
-import { AutoAnimate, Button, InputWithRef } from "@app/UI";
 import { useRef, useState } from "react";
-import { getContextualAiResponse, storeAsEmbeddings } from "@app/supabase";
+import { AutoAnimate, Button, InputWithRef } from "@app/UI";
+import {
+  ContextualAiResponse,
+  getContextualAiResponse,
+  storeAsEmbeddings,
+} from "@app/supabase";
 
 export const TestSupabase: React.FC = () => {
   const [gettingAiResponse, setGettingAiResponse] = useState(false);
   const [isAiLearning, setIsAiLearning] = useState(false);
 
   const [aiResponse, setAiResponse] = useState("");
+  const [relevantDocs, setRelevantDocs] = useState<string[]>();
   //refs
   const askInputRef = useRef<HTMLInputElement>(null);
   const teachInputRef = useRef<HTMLInputElement>(null);
@@ -16,10 +21,13 @@ export const TestSupabase: React.FC = () => {
   const handleAsk = async () => {
     const askInput = askInputRef.current;
     if (!askInput) return;
-    askInputRef.current.value = "";
     setGettingAiResponse(true);
-    const aiAnswer = await getContextualAiResponse(askInput.value);
-    setAiResponse(aiAnswer?.aiResponse);
+    const aiAnswer: ContextualAiResponse = await getContextualAiResponse(
+      askInput.value
+    );
+    askInputRef.current.value = "";
+    setAiResponse(aiAnswer.aiResponse);
+    setRelevantDocs(aiAnswer.relevantDocuments);
     setGettingAiResponse(false);
   };
 
@@ -29,6 +37,8 @@ export const TestSupabase: React.FC = () => {
     teachInputRef.current.value = "";
     setIsAiLearning(true);
     const storedDocument = await storeAsEmbeddings(teachInputValue);
+    // setStoredDoc(storedDocument)
+    console.log(storedDocument);
     setIsAiLearning(false);
   };
 
