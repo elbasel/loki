@@ -121,7 +121,7 @@ export const _getContextualAiResponse = async (
   const messages: Message[] = [
     {
       id: Math.random(),
-      author: "system",
+      author: "human",
       text: [...relevantDocsSet].join(" "),
     },
     {

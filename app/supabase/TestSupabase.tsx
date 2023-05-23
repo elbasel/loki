@@ -7,6 +7,7 @@ import {
   getContextualAiResponse,
   storeAsEmbeddings,
 } from "@app/supabase";
+import { getChatCompletionFromText } from "@app/open-ai/actions";
 
 export const TestSupabase: React.FC = () => {
   const [gettingAiResponse, setGettingAiResponse] = useState(false);
@@ -25,7 +26,14 @@ export const TestSupabase: React.FC = () => {
     const aiAnswer: ContextualAiResponse = await getContextualAiResponse(
       askInput.value
     );
+    if (aiAnswer.relevantDocuments.length === 0 && teachInputRef.current) {
+      const aiQuestion = await getChatCompletionFromText(
+        `provide a placeholder for an input field with information about a users's query: '${askInput.value}', the placeholder should be descriptive of the expected input and should be aimed to provide all the data needed for an ai language model to answer the users's query`
+      );
+      teachInputRef.current.placeholder = aiQuestion;
+    }
     askInputRef.current.value = "";
+
     setAiResponse(aiAnswer.aiResponse);
     setRelevantDocs(aiAnswer.relevantDocuments);
     setGettingAiResponse(false);
@@ -43,26 +51,38 @@ export const TestSupabase: React.FC = () => {
   };
 
   return (
-    <div className="space-y-4 ask-ai">
-      <div className="flex flex-col gap-4">
-        <InputWithRef
-          placeholder={gettingAiResponse ? "Thinking..." : "Ask me anything..."}
-          ref={askInputRef}
-        />
-        <Button onClick={handleAsk} disabled={gettingAiResponse}>
-          Ask
-        </Button>
-        <AutoAnimate>{aiResponse}</AutoAnimate>
+    <main className="space-y-8">
+      <div className="space-y-4 ask-ai">
+        <div className="flex flex-col gap-4">
+          <InputWithRef
+            placeholder={
+              gettingAiResponse ? "Thinking..." : "Ask me anything..."
+            }
+            ref={askInputRef}
+            disabled={gettingAiResponse}
+          />
+          <Button onClick={handleAsk} disabled={gettingAiResponse}>
+            Ask
+          </Button>
+          <AutoAnimate>{aiResponse}</AutoAnimate>
+          <ul>
+            <AutoAnimate>
+              {relevantDocs?.map((d) => (
+                <li key={d}>{d}</li>
+              ))}
+            </AutoAnimate>
+          </ul>
+        </div>
+        <div className="flex flex-col gap-4 teach-ai">
+          <InputWithRef
+            placeholder={isAiLearning ? "Learning..." : "Teach me anything!"}
+            ref={teachInputRef}
+          />
+          <Button onClick={handleTeach} disabled={isAiLearning}>
+            Teach
+          </Button>
+        </div>
       </div>
-      <div className="flex flex-col gap-4 teach-ai">
-        <InputWithRef
-          placeholder={isAiLearning ? "Learning..." : "Teach me anything!"}
-          ref={teachInputRef}
-        />
-        <Button onClick={handleTeach} disabled={isAiLearning}>
-          Teach
-        </Button>
-      </div>
-    </div>
+    </main>
   );
 };
