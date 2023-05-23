@@ -13,6 +13,8 @@ export const getRecursiveAiResponse = async (
   const aiResponse = await getChatCompletionFromText(
     `use '${context}' to answer '${query}', format your answer as a reply in a chat. if you need more information to answer the query, please respond only with 'no-info' and nothing else!`
   );
+
+  return aiResponse;
   console.log({ aiResponse });
   if (currentDepth === 2 || currentDepth > _MAX_RECURSION_DEPTH) {
     return aiResponse;
