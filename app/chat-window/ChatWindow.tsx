@@ -14,6 +14,24 @@ interface ChatWindowProps {
   loading: boolean;
   messages: _Message[];
 }
+
+const handleKeyPress = (e: KeyboardEvent) => {
+  if (e.key === "Enter" && e.ctrlKey) {
+    // submit the form
+    const textAreaElem = document.querySelector(
+      "#chat-window-text-area"
+    ) as HTMLTextAreaElement;
+    const submitButton: HTMLButtonElement | null = document.querySelector(
+      "#chat-window-submit-button"
+    );
+    if (!submitButton) {
+      console.log({ textAreaElem, submitButton });
+      throw new Error("no submit button found");
+    }
+    submitButton.click();
+  }
+};
+
 export const ChatWindow: React.FC<ChatWindowProps> = ({
   onSubmit,
   loading,
@@ -37,30 +55,12 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
     setFormValidationEnabled(false);
   };
 
-  const handleKeyPress = (e: KeyboardEvent) => {
-    if (e.key === "Enter" && e.ctrlKey) {
-      // submit the form
-      const textAreaElem = document.querySelector(
-        "#chat-window-text-area"
-      ) as HTMLTextAreaElement;
-      const submitButton: HTMLButtonElement | null = document.querySelector(
-        "#chat-window-submit-button"
-      );
-      if (!submitButton) {
-        console.log({ textAreaElem, submitButton });
-        throw new Error("no submit button found");
-      }
-      submitButton.click();
-    }
-  };
-
   useEffect(() => {
-    document.addEventListener("keydown", handleKeyPress);
-
-    return () => {
-      document.removeEventListener("keydown", handleKeyPress);
-    };
-  }, []);
+    document.addEventListener("keydown", (e) => {
+      if (loading) return;
+      handleKeyPress(e);
+    });
+  }, [loading]);
 
   useEffect(() => {
     const outputElement = document.querySelector(
@@ -73,17 +73,14 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
         top: outputElement.scrollHeight,
         behavior: "smooth",
       });
-    }, 100);
+    }, 800);
   }, [messages]);
 
   return (
-    <form
-      action={handleSubmit}
-      className="max-h-[100svh] overflow-y-auto"
-    >
+    <form action={handleSubmit} className="max-h-[100svh] overflow-y-auto">
       <Output
         id="chat-window-output"
-        className="mt-auto overflow-y-auto scrollbar-thin"
+        className="mt-auto mb-4 overflow-y-auto scrollbar-thin"
       >
         <AutoAnimate className="flex flex-col gap-2">
           {messages.map((msg, i) => (
@@ -100,15 +97,15 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
       </Output>
       <div className="relative flex w-full gap-2 p-2">
         <TextArea
-          // TODO: forward this ref to the textarea
-          // ref={textAreaRef}
           required={formValidationEnabled}
           id="chat-window-text-area"
           name="user-prompt"
           className={twMerge(
             "pr-11 max-h-64",
-            formValidationEnabled && "invalid:!ring-2 invalid:!ring-red-700"
+            formValidationEnabled && "invalid:!ring-2 invalid:!ring-red-700",
+            loading && "opacity-50 cursor-not-allowed pointer-events-none"
           )}
+          placeholder={loading ? "Thinking..." : "Type something..."}
         />
         <button
           id="chat-window-submit-button"

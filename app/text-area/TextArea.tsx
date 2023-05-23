@@ -8,6 +8,7 @@ interface TextAreaProps {
   className?: string;
   required?: boolean;
   id?: string;
+  placeholder?: string;
 }
 
 export const TextArea: React.FC<TextAreaProps> = ({
@@ -17,6 +18,7 @@ export const TextArea: React.FC<TextAreaProps> = ({
   className,
   required,
   id,
+  placeholder,
 }) => {
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -35,13 +37,13 @@ export const TextArea: React.FC<TextAreaProps> = ({
 
   return (
     <textarea
+      placeholder={placeholder || "Type something..."}
       required={required}
       ref={inputRef}
       className={twMerge(
         "w-full text-white bg-black py-2 px-4 rounded-lg resize-none app-scrollbar focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200",
         className
       )}
-      placeholder="Type something..."
       onChange={handleInputChange}
       rows={1}
       value={value}

@@ -35,7 +35,13 @@ export const TestOpenAiPage: React.FC = () => {
   return (
     <main>
       <ChatWindow
-        onSubmit={handleSubmit}
+        onSubmit={(v) => {
+          setLoading(true);
+          setTimeout(() => {
+            handleSubmit(v);
+          }, 1000);
+          setLoading(false);
+        }}
         messages={messages}
         loading={loading}
       />
