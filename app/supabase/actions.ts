@@ -1,5 +1,7 @@
 "use server";
 
+import { cookies } from "next/headers";
+
 import { OpenAIEmbeddings } from "langchain/embeddings/openai";
 import { loadQARefineChain } from "langchain/chains";
 import { SupabaseHybridSearch } from "langchain/retrievers/supabase";
@@ -18,6 +20,19 @@ const _SUPABASE_CLIENT = createClient(
   process.env.SUPABASE_URL || "",
   process.env.SUPABASE_PRIVATE_KEY || ""
 );
+
+type SupaBaseDoc = {
+  count: null | number;
+  data: null | {
+    content: string;
+    created_at: string;
+    embedding: string;
+  };
+  id: null | number;
+  // error: null | Error;
+  status: number;
+  statusText: string;
+};
 
 // openai
 const _EMBEDDINGS_TIMEOUT = 0; // 0 means no timeout
@@ -55,6 +70,8 @@ export type _ContextualAiResponse = {
 export const _getContextualAiResponse = async (
   input: string
 ): Promise<_ContextualAiResponse> => {
+  const c = cookies();
+  console.log({ c });
   const contextualResponse: _ContextualAiResponse = {
     aiResponse: "",
     relevantDocuments: [],
@@ -62,7 +79,6 @@ export const _getContextualAiResponse = async (
   const relevantDocsSet: Set<string> = new Set();
   const relevantDocsPromiseList: Promise<void>[] = [];
   const trimmedInput = input.trim().replaceAll("\n", " ");
-
   //get relevant docs for the input as a whole
   // !! TODO: only it's less than _USER_INPUT_LIMIT tokens....
   // const tokenizer = new GPT3Tokenizer({ type: "gpt3" });
@@ -75,7 +91,6 @@ export const _getContextualAiResponse = async (
   // * only add the first relevant doc, since it's the most relevant
   if (inputRelevantDocs[0])
     relevantDocsSet.add(inputRelevantDocs[0].pageContent);
-
   const inputSplit = trimmedInput.split(" ");
   if (inputSplit.length === 0) throw new Error("Invalid input");
   if (inputSplit.length > _SUPABASE_REQUEST_LIMIT) {
@@ -104,36 +119,32 @@ export const _getContextualAiResponse = async (
       });
       relevantDocsPromiseList.push(relevantDocPromise);
     }
-
     await Promise.all(relevantDocsPromiseList);
-
     const aiHasNoContext = [...relevantDocsSet].length === 0;
-
     if (aiHasNoContext)
       return {
         aiResponse: promptTemplates.noContextAvailable,
         relevantDocuments: [],
       };
   }
-
   const relevantDocsArray: string[] = [...relevantDocsSet];
-
-  const messages: Message[] = [
-    {
-      id: Math.random(),
-      author: "human",
-      text: [...relevantDocsSet].join(" "),
-    },
-    {
-      id: Math.random(),
-      author: "human",
-      text: input,
-    },
-  ];
-  const aiResponse = await getChatCompletion(messages);
-  if (!aiResponse.text) throw new Error("empty ai response");
+  if (relevantDocsArray.length === 0) {
+    const supabaseResponseAllDocs = await _SUPABASE_CLIENT
+      .from("documents")
+      .select();
+    if (supabaseResponseAllDocs.error) throw supabaseResponseAllDocs.error;
+    const allSupaBaseDocs: any[] = supabaseResponseAllDocs.data;
+    if (allSupaBaseDocs.length === 0) throw new Error("No docs in supabase");
+    allSupaBaseDocs.forEach((d) => {
+      relevantDocsArray.push(d.content);
+    });
+  }
+  const aiResponse = await getChatCompletionFromText(
+    `use '${relevantDocsArray.join(" ")}' to answer '${trimmedInput}'`
+  );
+  if (!aiResponse) throw new Error("empty ai response");
   return {
-    aiResponse: aiResponse.text,
+    aiResponse,
     relevantDocuments: relevantDocsArray,
   };
 };
