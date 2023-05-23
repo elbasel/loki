@@ -2,7 +2,7 @@ import { TestLoadUrl } from "./TestLoadUrl";
 
 interface PagProps {}
 
-export const Pag: React.FC<PagProps> = ({}) => {
+const Page: React.FC<PagProps> = ({}) => {
   return (
     <>
       <TestLoadUrl />
@@ -10,4 +10,4 @@ export const Pag: React.FC<PagProps> = ({}) => {
   );
 };
 
-export default Pag;
+export default Page;
