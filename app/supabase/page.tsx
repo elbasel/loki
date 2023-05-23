@@ -1,7 +1,11 @@
 import { TestSupabase } from "./TestSupabase";
 
 const TestSupabasePage = () => {
-  return <TestSupabase />;
+  return;
+
+  <>
+    <TestSupabase />;
+  </>;
 };
 
 export default TestSupabasePage;

@@ -64,6 +64,7 @@ export const TestSupabase: React.FC = () => {
             }
             ref={askInputRef}
             disabled={gettingAiResponse}
+            className={(gettingAiResponse && "opacity-50") || undefined}
           />
           <Button onClick={handleAsk} disabled={gettingAiResponse}>
             Ask
@@ -88,7 +89,7 @@ export const TestSupabase: React.FC = () => {
         </div>
       </div>
       <div className="all-docs">
-        {(async () => {
+        {/* {(async () => {
           const allDocs = await getAllSupabaseDocs();
           return (
             <AutoAnimate>
@@ -97,7 +98,7 @@ export const TestSupabase: React.FC = () => {
               ))}
             </AutoAnimate>
           );
-        })()}
+        })()} */}
       </div>
     </main>
   );
