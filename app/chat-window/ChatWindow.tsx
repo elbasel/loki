@@ -50,7 +50,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
       "textarea"
     ) as HTMLTextAreaElement;
     if (!textAreaElem) return;
-    textAreaElem.style.height = "20px";
+    textAreaElem.style.height = "auto";
     textAreaElem.value = "";
     textAreaElem.textContent = "";
     setFormValidationEnabled(false);
