@@ -73,7 +73,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
         top: outputElement.scrollHeight,
         behavior: "smooth",
       });
-    },300);
+    }, 300);
   }, [messages]);
 
   return (
@@ -83,16 +83,14 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
         className="flex flex-col gap-2 mt-auto mb-4 overflow-y-auto scrollbar-thin"
       >
         {/* <AutoAnimate className="flex flex-col gap-2"> */}
-          {messages.map((msg, i) => (
-            <Fragment key={i}>
-              <ChatMessage
-                message={msg?.text}
-                className={twMerge(
-                  msg.author === "human" && "flex-row-reverse"
-                )}
-              />
-            </Fragment>
-          ))}
+        {messages.map((msg, i) => (
+          <Fragment key={i}>
+            <ChatMessage
+              message={msg?.text}
+              className={twMerge(msg?.author === "human" && "flex-row-reverse")}
+            />
+          </Fragment>
+        ))}
         {/* </AutoAnimate> */}
       </Output>
       <div className="relative flex w-full gap-2 p-2">
