@@ -16,7 +16,7 @@ export const TestOpenAiPage: React.FC = () => {
 
   // set userPrompt on submit
   const handleSubmit = async (userPrompt: string) => {
-    if (!userPrompt) return;
+    if (!userPrompt || loading) return;
     setLoading(true);
     const newMessages: Message[] = [
       ...messages,

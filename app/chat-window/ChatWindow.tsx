@@ -1,9 +1,9 @@
 "use client";
 
-import { AutoAnimate, Output } from "@app/UI";
+import { Output } from "@app/UI";
 import { Loader } from "@app/loader";
-import { Fragment, useEffect, useRef, useState } from "react";
-import { ChatMessage, type ChatMessageProps } from "./ChatMessage";
+import { Fragment, useEffect, useState } from "react";
+import { ChatMessage } from "./ChatMessage";
 import { twMerge } from "tailwind-merge";
 import { RiSendPlaneLine } from "react-icons/ri";
 import { TextArea } from "@app/UI/text-area";
@@ -15,23 +15,6 @@ interface ChatWindowProps {
   messages: _Message[];
 }
 
-const handleKeyPress = (e: KeyboardEvent) => {
-  if (e.key === "Enter" && e.ctrlKey) {
-    // submit the form
-    const textAreaElem = document.querySelector(
-      "#chat-window-text-area"
-    ) as HTMLTextAreaElement;
-    const submitButton: HTMLButtonElement | null = document.querySelector(
-      "#chat-window-submit-button"
-    );
-    if (!submitButton) {
-      console.log({ textAreaElem, submitButton });
-      throw new Error("no submit button found");
-    }
-    submitButton.click();
-  }
-};
-
 export const ChatWindow: React.FC<ChatWindowProps> = ({
   onSubmit,
   loading,
@@ -40,7 +23,25 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
   const [formValidationEnabled, setFormValidationEnabled] = useState(false);
   const [userPrompt, setUserPrompt] = useState("");
 
+  const handleKeyPress = (e: KeyboardEvent) => {
+    if (e.key === "Enter" && e.ctrlKey) {
+      // submit the form
+      const textAreaElem = document.querySelector(
+        "#chat-window-text-area"
+      ) as HTMLTextAreaElement;
+      const submitButton: HTMLButtonElement | null = document.querySelector(
+        "#chat-window-submit-button"
+      );
+      if (!submitButton) {
+        console.log({ textAreaElem, submitButton });
+        throw new Error("no submit button found");
+      }
+      submitButton.click();
+    }
+  };
+
   useEffect(() => {
+    if (!userPrompt) return;
     onSubmit(userPrompt);
     const textAreaElem = document.querySelector(
       "textarea"
@@ -50,14 +51,21 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
     textAreaElem.value = "";
     textAreaElem.textContent = "";
     setFormValidationEnabled(false);
+    // adding onSubmit here will cause an infinite render loop, it's perfectly fine to have userPrompt only!
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userPrompt]);
 
   useEffect(() => {
-    document.addEventListener("keydown", (e) => {
-      if (loading) return;
+    const onKeyPress = (e: KeyboardEvent) => {
       handleKeyPress(e);
-    });
-  }, [loading]);
+    };
+
+    document.addEventListener("keydown", onKeyPress);
+    return () => {
+      document.removeEventListener("keydown", onKeyPress);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     const outputElement = document.querySelector(
