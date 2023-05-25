@@ -6,7 +6,7 @@ import { Fragment, useEffect, useRef, useState } from "react";
 import { ChatMessage, type ChatMessageProps } from "./ChatMessage";
 import { twMerge } from "tailwind-merge";
 import { RiSendPlaneLine } from "react-icons/ri";
-import { TextArea } from "@app/text-area";
+import { TextArea } from "@app/UI/text-area";
 import { _Message } from "@app/open-ai/actions";
 
 interface ChatWindowProps {
@@ -37,14 +37,10 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
   loading,
   messages,
 }) => {
-  // const textAreaRef = useRef(null);
-  const outputRef = useRef(null);
   const [formValidationEnabled, setFormValidationEnabled] = useState(false);
+  const [userPrompt, setUserPrompt] = useState("");
 
-  const handleSubmit = (formData: FormData) => {
-    setFormValidationEnabled(true);
-    const userPrompt = formData.get("user-prompt") as string;
-    if (!userPrompt) return;
+  useEffect(() => {
     onSubmit(userPrompt);
     const textAreaElem = document.querySelector(
       "textarea"
@@ -54,7 +50,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
     textAreaElem.value = "";
     textAreaElem.textContent = "";
     setFormValidationEnabled(false);
-  };
+  }, [userPrompt]);
 
   useEffect(() => {
     document.addEventListener("keydown", (e) => {
@@ -78,7 +74,14 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
   }, [messages]);
 
   return (
-    <form action={handleSubmit} className="max-h-[100svh] overflow-y-auto">
+    <form
+      action={(formData: FormData) => {
+        setFormValidationEnabled(true);
+        const userPrompt = formData.get("user-prompt") as string;
+        setUserPrompt(userPrompt);
+      }}
+      className="overflow-y-auto"
+    >
       <Output
         id="chat-window-output"
         className="flex flex-col gap-2 mt-auto mb-4 overflow-y-auto scrollbar-thin"
@@ -94,7 +97,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
         ))}
         {/* </AutoAnimate> */}
       </Output>
-      <div className="relative flex w-full gap-2 p-2">
+      <div className="relative w-full gap-2 p-2">
         <TextArea
           required={formValidationEnabled}
           id="chat-window-text-area"
@@ -109,7 +112,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
         <button
           id="chat-window-submit-button"
           type="submit"
-          className="flex items-center flex-1"
+          className="items-center flex-1 hidden"
         >
           {loading ? <Loader /> : <RiSendPlaneLine className="flex-1" />}
         </button>

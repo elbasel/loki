@@ -33,7 +33,7 @@ export const TestOpenAiPage: React.FC = () => {
   };
 
   return (
-    <main>
+    <main className="max-h-screen overflow-hidden">
       <ChatWindow
         onSubmit={(v) => {
           setLoading(true);
