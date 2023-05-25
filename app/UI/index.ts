@@ -2,5 +2,6 @@ import { Button } from "./Button";
 import { Input, InputWithRef } from "./Input";
 import { AutoAnimate } from "./AutoAnimate";
 import { Output } from "./Output";
+import { Loader } from "./Loader";
 
-export { Button, Input, Output, InputWithRef, AutoAnimate };
+export { Loader, Button, Input, Output, InputWithRef, AutoAnimate };

@@ -8,4 +8,3 @@ export const Loader: React.FC<LoaderProps> = ({}) => {
     </div>
   );
 };
-export default Loader;

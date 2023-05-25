@@ -1,8 +1,8 @@
 "use client";
 
-import { Output } from "@app/UI";
-import { Loader } from "@app/loader";
 import { Fragment, useEffect, useState } from "react";
+import { Output } from "@app/UI";
+import { Loader } from "@app/UI";
 import { ChatMessage } from "./ChatMessage";
 import { twMerge } from "tailwind-merge";
 import { RiSendPlaneLine } from "react-icons/ri";

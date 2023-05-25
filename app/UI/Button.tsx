@@ -2,7 +2,7 @@
 
 import { twMerge } from "tailwind-merge";
 import { buttonClassName as defaultButtonClassName } from "./defaultClassNames";
-import { Loader } from "@app/loader";
+import { Loader } from ".";
 
 interface ButtonProps {
   onClick?: () => void;
