@@ -46,12 +46,6 @@ type SupaBaseDoc = {
 // openai
 const _EMBEDDINGS_TIMEOUT = 0; // 0 means no timeout
 const _USER_INPUT_LIMIT = 1000; // 1000 tokens, token ~= 1 word
-const _OPEN_AI_EMBEDDINGS = new OpenAIEmbeddings({
-  timeout: _EMBEDDINGS_TIMEOUT,
-});
-const _RETRIEVER = new SupabaseHybridSearch(_OPEN_AI_EMBEDDINGS, {
-  client: _SUPABASE_CLIENT,
-});
 
 const _getMostImportantKeywords = async (text: string): Promise<string[]> => {
   const generatePrompt = PromptGenerator.new(
@@ -89,6 +83,13 @@ export const _getContextualAiResponse = async (
 };
 
 export const _storeAsEmbeddings = async (content: string, metadata?: any) => {
+  const _OPEN_AI_EMBEDDINGS = new OpenAIEmbeddings({
+    timeout: _EMBEDDINGS_TIMEOUT,
+  });
+  const _RETRIEVER = new SupabaseHybridSearch(_OPEN_AI_EMBEDDINGS, {
+    client: _SUPABASE_CLIENT,
+  });
+
   const embedding = await _OPEN_AI_EMBEDDINGS.embedQuery(content);
 
   const supabaseResponse: "error" | "success" = await _insertDocument(
@@ -114,6 +115,13 @@ const _insertDocument = async (
 };
 
 export const _getRelevantDocs = async (input: string): Promise<string[]> => {
+  const _OPEN_AI_EMBEDDINGS = new OpenAIEmbeddings({
+    timeout: _EMBEDDINGS_TIMEOUT,
+  });
+  const _RETRIEVER = new SupabaseHybridSearch(_OPEN_AI_EMBEDDINGS, {
+    client: _SUPABASE_CLIENT,
+  });
+
   const relevantDocs: string[] = [];
   const trimmedInput = input.trim().replaceAll("\n", " /n ");
   // Use supabase hybrid search to get relevant docs
