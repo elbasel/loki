@@ -7,7 +7,7 @@ import { _getChatCompletionFromText } from "@app/open-ai/actions";
 import { createClient } from "@supabase/supabase-js";
 // should be global, not scoped to supabase
 import { PromptGenerator, promptTemplates } from "./prompts";
-import { getRecursiveAiResponse as _getRecursiveAiResponse } from "./getRecursiveAiResponse";
+import { getRecursiveAiResponse } from ".";
 
 // !! import { revalidatePath } from "next/cache";
 
@@ -72,11 +72,10 @@ export const _getContextualAiResponse = async (
   input: string
 ): Promise<_ContextualAiResponse> => {
   const relevantDocuments = await _getRelevantDocs(input);
-  const aiResponse: string = await _getRecursiveAiResponse(
-    input,
+  const aiResponse: string = await getRecursiveAiResponse(
+    input.trim().replaceAll("\n", " "),
     relevantDocuments
   );
-  console.log({ relevantDocuments });
   return {
     aiResponse,
     relevantDocuments,
@@ -109,66 +108,24 @@ const _insertDocument = async (
 };
 
 export const _getRelevantDocs = async (input: string): Promise<string[]> => {
-  const relevantDocsSet: Set<string> = new Set();
-  const relevantDocsPromiseList: Promise<void>[] = [];
+  const relevantDocs: string[] = [];
   const trimmedInput = input.trim().replaceAll("\n", " ");
-  // !! delete later
-  // const allSupaBaseDocs = await _getAllSupabaseDocs();
-  //get relevant docs for the input as a whole
-  // !! TODO: only it's less than _USER_INPUT_LIMIT tokens....
-  // const tokenizer = new GPT3Tokenizer({ type: "gpt3" });
-  // const tokens = tokenizer.encode(input);
-  // if (tokens.length > _USER_INPUT_LIMIT) () => {
-  // * otherwise...
-  //
-  // };
-  // this function ignores updates to documents, might be because of request caching
-  const inputRelevantDocs = await _RETRIEVER.getRelevantDocuments(input);
+  const inputRelevantDocs = await _RETRIEVER.getRelevantDocuments(trimmedInput);
   inputRelevantDocs.forEach((d) => {
-    relevantDocsSet.add(d.pageContent);
+    relevantDocs.push(d.pageContent);
   });
-  const inputSplit = trimmedInput.split(" ");
-  if (inputSplit.length === 0) throw new Error("Invalid input");
-  if (inputSplit.length > _SUPABASE_REQUEST_LIMIT) {
-    const keywords = await _getMostImportantKeywords(trimmedInput);
-    console.log({ keywords });
-    if (keywords.length > 10) {
-      console.log({ keywords });
-      throw new Error("Too many keywords");
-    }
-    for (let index = 0; index < keywords.length; index++) {
-      const word = keywords[index];
-      // resolved after adding relevant doc to set\\
-      const relevantDocPromise = new Promise<void>(async (resolve, reject) => {
-        setTimeout(async () => {
-          try {
-            const relevantDocuments = await _RETRIEVER.getRelevantDocuments(
-              word
-            );
-            console.log({ relevantDocuments });
-            const firstDoc = relevantDocuments[0];
-            if (firstDoc) relevantDocsSet.add(firstDoc.pageContent);
-            resolve();
-          } catch (error) {
-            reject(error);
-          }
-        }, _SUPABASE_REQUEST_INTERVAL * index);
-      });
-      relevantDocsPromiseList.push(relevantDocPromise);
-    }
-    await Promise.all(relevantDocsPromiseList);
-  }
-  console.log({ relevantDocsPromiseList });
-  const relevantDocsArray: string[] = [...relevantDocsSet];
-  // if (relevantDocsArray.length === 0) {
-  // }
-  return relevantDocsArray;
+  return relevantDocs;
 };
 
-export const _getAllSupabaseDocs = async (): Promise<string[]> => {
-  const response = await _SUPABASE_CLIENT.from("documents").select("*");
-  console.log({ allSupabaseDocs: response });
-  return ["one", "two"];
-  // if (response.error) throw response.error;
-  // return response.data.map((d: any) => d.content);
+export const _getAllSupabaseDocs = async (table: string): Promise<string[]> => {
+  const allDocs: string[] = [];
+  const { data, error } = await _SUPABASE_CLIENT.from(table).select("*");
+  if (error) throw error;
+  if (!data) throw new Error("No data returned from supabase");
+  data.forEach((d) => {
+    const { content, id, metadata, embedding } = d;
+    if (content == "") throw new Error("Content is empty");
+    allDocs.push(content);
+  });
+  return allDocs;
 };
