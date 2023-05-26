@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import { AutoAnimate, Button, InputWithRef } from "@app/UI";
 import {
-  ContextualAiResponse,
+  // ContextualAiResponse,
   // getAllSupabaseDocs,
   getContextualAiResponse,
   storeAsEmbeddings,
@@ -24,9 +24,7 @@ export const TestSupabase: React.FC = () => {
     const askInput = askInputRef.current;
     if (!askInput) return;
     setGettingAiResponse(true);
-    const aiAnswer: ContextualAiResponse = await getContextualAiResponse(
-      askInput.value
-    );
+    const aiAnswer: string[] = await getContextualAiResponse(askInput.value);
     askInputRef.current.value = "";
     setAiResponse(aiAnswer[0]);
     setRelevantDocs(aiAnswer.slice(1));
