@@ -80,6 +80,7 @@ export const _getContextualAiResponse = async (
       )}}`
   );
   console.log(`Got ${relevantDocuments.length} relevant docs`);
+  // console.log('test')
   console.log(`Calling getRecursiveAiResponse(input, relevantDocuments)`);
   const aiResponse: string = await getRecursiveAiResponse(
     input.trim().replaceAll("\n", " "),
