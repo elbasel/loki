@@ -54,15 +54,15 @@ type _CheerioDoc = {
 };
 export const _loadUrl = async (url: string): Promise<_UrlInfo[]> => {
   const urlInfo: _UrlInfo[] = [];
-  const loader = new CheerioWebBaseLoader(url);
-  const cheerioDocs: _CheerioDoc[] = await loader.load();
-  cheerioDocs.forEach((d) => {
-    urlInfo.push({
-      url,
-      title: _getPageTitle(d.pageContent),
-      html: d.pageContent,
-    });
-  });
+  // const loader = new CheerioWebBaseLoader(url);
+  // const cheerioDocs: _CheerioDoc[] = await loader.load();
+  // cheerioDocs.forEach((d) => {
+  //   urlInfo.push({
+  //     url,
+  //     title: _getPageTitle(d.pageContent),
+  //     html: d.pageContent,
+  //   });
+  // });
 
   return urlInfo;
 };

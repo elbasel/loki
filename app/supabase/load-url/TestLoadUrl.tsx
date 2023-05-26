@@ -19,7 +19,11 @@ const _getUrlInfo = async (url: string) => {
 
 export const TestLoadUrl: React.FC = () => {
   const inputRef = useRef<any>();
-  const [urlInfo, setUrlInfo] = useState<UrlInfo>();
+  const [urlInfo, setUrlInfo] = useState<UrlInfo>({
+    title: "",
+    url: "",
+    html: "",
+  });
 
   // get the url info on submit
   type _ServerResponse = "success" | "error";
@@ -36,32 +40,13 @@ export const TestLoadUrl: React.FC = () => {
   }, []);
 
   return (
-    <main>
+    <main className="space-y-4">
       <h1>Test Load Url</h1>
-      <InputWithRef ref={inputRef} />
+      <InputWithRef ref={inputRef} className="px-2 py-4 text-xl font-bold" />
       <Button onClick={handleSubmit} type="submit">
         Load URL into Long term ai memory
       </Button>
-      <Output>
-        <table>
-          <tr>
-            <thead>Site:</thead>
-            <td>
-              <a target="_blank" href={urlInfo?.url}>
-                {urlInfo?.title}
-              </a>
-            </td>
-          </tr>
-          <tr>
-            <thead>Url:</thead>
-            <td>
-              <a target="_blank" href={urlInfo?.url}>
-                {urlInfo?.url}
-              </a>
-            </td>
-          </tr>
-        </table>
-      </Output>
+      <Output></Output>
     </main>
   );
 };

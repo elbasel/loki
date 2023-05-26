@@ -43,8 +43,6 @@ const _OPEN_AI_EMBEDDINGS = new OpenAIEmbeddings({
 });
 const _RETRIEVER = new SupabaseHybridSearch(_OPEN_AI_EMBEDDINGS, {
   client: _SUPABASE_CLIENT,
-  similarityK: 100,
-  keywordK: 100,
 });
 
 const _getMostImportantKeywords = async (text: string): Promise<string[]> => {
