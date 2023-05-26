@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+export const fetchCache = "force-no-store";
+
 const linkStyles =
   "flex-center-1 border rounded-lg border-white px-4 py-2 bg-black/30 hover:bg-black transition duration-200";
 
