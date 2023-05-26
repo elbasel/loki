@@ -8,6 +8,7 @@ import { createClient } from "@supabase/supabase-js";
 // should be global, not scoped to supabase
 import { PromptGenerator, promptTemplates } from "./prompts";
 import { getRecursiveAiResponse } from ".";
+import { revalidateTag } from "next/cache";
 
 // !! import { revalidatePath } from "next/cache";
 
@@ -71,6 +72,7 @@ export type _ContextualAiResponse = {
 export const _getContextualAiResponse = async (
   input: string
 ): Promise<_ContextualAiResponse> => {
+  revalidateTag("supabase");
   const relevantDocuments = await _getRelevantDocs(input);
   const aiResponse: string = await getRecursiveAiResponse(
     input.trim().replaceAll("\n", " "),
