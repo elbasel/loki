@@ -41,7 +41,6 @@ export const TestSupabase: React.FC = () => {
     setIsAiLearning(true);
     const storedDocument = await storeAsEmbeddings(teachInputValue);
     // setStoredDoc(storedDocument)
-    console.log(storedDocument);
     setIsAiLearning(false);
   };
 
