@@ -33,7 +33,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
         "#chat-window-submit-button"
       );
       if (!submitButton) {
-        console.log({ textAreaElem, submitButton });
+        // console.log({ textAreaElem, submitButton });
         throw new Error("no submit button found");
       }
       submitButton.click();
