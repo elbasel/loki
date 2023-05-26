@@ -73,7 +73,9 @@ export const _getContextualAiResponse = async (
 ): Promise<string[]> => {
   console.log('Getting contextual ai response for input: "' + input + '"');
   console.log(`Calling _getRelevantDocs(input) with input: "${input}"`);
-  const relevantDocuments = await _getRelevantDocs(input);
+  const relevantDocuments = await _getRelevantDocs(
+    new Date().toLocaleDateString("en-US") + input
+  );
   console.log(`Got ${relevantDocuments.length} relevant docs`);
   console.log(`Calling getRecursiveAiResponse(input, relevantDocuments)`);
   const aiResponse: string = await getRecursiveAiResponse(
@@ -87,9 +89,6 @@ export const _getContextualAiResponse = async (
 export const _storeAsEmbeddings = async (content: string, metadata?: any) => {
   const _OPEN_AI_EMBEDDINGS = new OpenAIEmbeddings({
     timeout: _EMBEDDINGS_TIMEOUT,
-  });
-  const _RETRIEVER = new SupabaseHybridSearch(_OPEN_AI_EMBEDDINGS, {
-    client: _SUPABASE_CLIENT,
   });
 
   const embedding = await _OPEN_AI_EMBEDDINGS.embedQuery(content);
