@@ -16,39 +16,15 @@ export const _getRecursiveAiResponse = async (
 
   messages.push({
     id: Math.random(),
-    author: "human",
-    text: `The following is the information provided: '${contextArray.join(
-      " "
-    )}' this is the end of the information provided, please take into account the information provided when answering all the following questions, adhering to the same style of our following conversation. use the information provided to provide answers, in case no information is relevant to the question, say that you don't have any information and then offer advice. format your answer as follows: 'Based on provided information': 'answer', 'D, 'Disregarding provided information': 'answer'`,
-  });
-  messages.push({
-    id: Math.random(),
     author: "system",
-    text: "the value of y is 2",
-  });
-
-  messages.push({
-    id: Math.random(),
-    author: "human",
-    text: "What is the value of y?",
-  });
-
-  messages.push({
-    id: Math.random(),
-    author: "ai",
-    text: "According to my current information, the value of y is 2, would you like to know anything else?",
-  });
-
-  messages.push({
-    id: Math.random(),
-    author: "human",
-    text: "What is the value of z?",
-  });
-
-  messages.push({
-    id: Math.random(),
-    author: "ai",
-    text: "I'm afraid I don't have enough information about the value of z. However the letter z is often used in mathematics to represent an unknown value, would there be anything else you would like to know?",
+    text: `you are a personal assistant, you are provided with the user's saved documents, your aim is to understand and index these documents and then answer the user's query, the user assumes that you are using his documents to answer questions.
+  As an example:
+  Provided Documents: 'elbasel is a dev. elbasel has short hair'
+  user: who is elbasel?
+  ai; elbasel is a developer with short hair, I don't have any further info, please add more info to your documents so that I can further assist you.
+  The following is the actual provided documents that should be used to assist the user: '${contextArray.join(
+    ". "
+  )}'.`,
   });
 
   messages.push({
@@ -56,7 +32,7 @@ export const _getRecursiveAiResponse = async (
     author: "human",
     text: query,
   });
-
+  
   const aiResponse = await getChatCompletion(messages);
 
   return aiResponse.text;
