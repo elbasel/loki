@@ -10,6 +10,8 @@ import {
 } from "@app/supabase";
 import { _getChatCompletionFromText } from "@app/open-ai/actions";
 
+export const fetchCache = "force-no-store";
+
 export const TestSupabase: React.FC = () => {
   const [gettingAiResponse, setGettingAiResponse] = useState(false);
   const [isAiLearning, setIsAiLearning] = useState(false);

@@ -18,14 +18,7 @@ const _SUPABASE_REQUEST_INTERVAL = 1500; // 1.5s
 const _SUPABASE_REQUEST_LIMIT = 10; // limit supabase request i to 10 requests for every user sumbit
 const _SUPABASE_CLIENT = createClient(
   process.env.SUPABASE_URL || "",
-  process.env.SUPABASE_PRIVATE_KEY || "",
-  {
-    realtime: {
-      headers: {
-        "Cache-Control": "no-cache",
-      },
-    },
-  }
+  process.env.SUPABASE_PRIVATE_KEY || ""
 );
 
 const _MIN_RELEVANT_DOCS = 3;
@@ -73,14 +66,8 @@ export const _getContextualAiResponse = async (
 ): Promise<string[]> => {
   console.log('Getting contextual ai response for input: "' + input + '"');
   console.log(`Calling _getRelevantDocs(input) with input: "${input}"`);
-  const relevantDocuments = await _getRelevantDocs(
-    input +
-      `ignore this part, this is just a timestamp for this documents, ${new Date().toLocaleString(
-        "en-US"
-      )}}`
-  );
+  const relevantDocuments = await _getRelevantDocs(input);
   console.log(`Got ${relevantDocuments.length} relevant docs`);
-  // console.log('test')
   console.log(`Calling getRecursiveAiResponse(input, relevantDocuments)`);
   const aiResponse: string = await getRecursiveAiResponse(
     input.trim().replaceAll("\n", " "),
@@ -115,7 +102,11 @@ const _insertDocument = async (
     .insert([{ content, embedding }])
     .select();
 
-  if (response.error) return "error";
+  if (response.error) {
+    console.log({ response });
+    return "error";
+  }
+
   return "success";
 };
 
@@ -125,7 +116,6 @@ export const _getRelevantDocs = async (input: string): Promise<string[]> => {
   });
   const _RETRIEVER = new SupabaseHybridSearch(_OPEN_AI_EMBEDDINGS, {
     client: _SUPABASE_CLIENT,
-    similarityK: Math.trunc(Math.random() * 10),
   });
 
   const relevantDocs: string[] = [];
