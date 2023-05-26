@@ -1,5 +1,5 @@
 import {
-  type _ContextualAiResponse,
+  // type _ContextualAiResponse,
   _getContextualAiResponse,
   _storeAsEmbeddings,
   _getRelevantDocs,
@@ -14,5 +14,5 @@ export {
   _getRelevantDocs as getRelevantDocs,
   _getAllSupabaseDocs as getAllSupabaseDocs,
   _getRecursiveAiResponse as getRecursiveAiResponse,
-  type _ContextualAiResponse as ContextualAiResponse,
+  // type _ContextualAiResponse as ContextualAiResponse,
 };
