@@ -168,8 +168,11 @@ export const _getRelevantDocs = async (input: string): Promise<string[]> => {
   const relevantDocsSet = new Set(relevantDocs);
 
   return [
-    "Now date and time: " + new Date().toISOString(),
-    "A random id assigned to thes provided documents: " +
+    "Now date and time: " +
+      new Date().toString() +
+      "TimeZoneOffset" +
+      new Date().getTimezoneOffset(),
+    "A random id assigned to these provided documents: " +
       Math.random().toString(),
     ...relevantDocsSet,
   ];
