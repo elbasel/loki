@@ -28,9 +28,8 @@ export const TestSupabase: React.FC = () => {
       askInput.value
     );
     askInputRef.current.value = "";
-
-    setAiResponse(aiAnswer.aiResponse);
-    setRelevantDocs(aiAnswer.relevantDocuments);
+    setAiResponse(aiAnswer[0]);
+    setRelevantDocs(aiAnswer.slice(1));
     setGettingAiResponse(false);
   };
 

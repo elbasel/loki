@@ -64,22 +64,20 @@ const _getMostImportantKeywords = async (text: string): Promise<string[]> => {
   return keywords;
 };
 
-export type _ContextualAiResponse = {
-  aiResponse: string;
-  relevantDocuments: string[];
-};
+// export type _ContextualAiResponse = {
+//   // aiResponse: string;
+//   relevantDocuments: string[];
+// };
 export const _getContextualAiResponse = async (
   input: string
-): Promise<_ContextualAiResponse> => {
+): Promise<string[]> => {
   const relevantDocuments = await _getRelevantDocs(input);
   const aiResponse: string = await getRecursiveAiResponse(
     input.trim().replaceAll("\n", " "),
     relevantDocuments
   );
-  return {
-    aiResponse,
-    relevantDocuments,
-  };
+
+  return [aiResponse, ...relevantDocuments];
 };
 
 export const _storeAsEmbeddings = async (content: string, metadata?: any) => {
