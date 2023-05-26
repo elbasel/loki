@@ -53,16 +53,6 @@ const _RETRIEVER = new SupabaseHybridSearch(_OPEN_AI_EMBEDDINGS, {
   client: _SUPABASE_CLIENT,
 });
 
-export async function POST(req: NextRequest) {
-  const requestUrl = req.nextUrl;
-  revalidatePath(requestUrl.pathname);
-}
-
-export async function GET(req: NextRequest) {
-  const requestUrl = req.nextUrl;
-  revalidatePath(requestUrl.pathname);
-}
-
 const _getMostImportantKeywords = async (text: string): Promise<string[]> => {
   const generatePrompt = PromptGenerator.new(
     promptTemplates.getMostImportantKeywords
@@ -126,59 +116,59 @@ const _insertDocument = async (
 export const _getRelevantDocs = async (input: string): Promise<string[]> => {
   const relevantDocs: string[] = [];
   const trimmedInput = input.trim().replaceAll("\n", " /n ");
-
+  return [Math.random().toString()];
   // Use supabase hybrid search to get relevant docs
-  const inputRelevantDocs = await _RETRIEVER.getRelevantDocuments(trimmedInput);
-  console.log(
-    `Found ${inputRelevantDocs.length} relevant docs using supabase hybrid search`
-  );
-  inputRelevantDocs.forEach((d) => {
-    relevantDocs.push(d.pageContent);
-  });
+  // const inputRelevantDocs = await _RETRIEVER.getRelevantDocuments(trimmedInput);
+  // console.log(
+  //   `Found ${inputRelevantDocs.length} relevant docs using supabase hybrid search`
+  // );
+  // inputRelevantDocs.forEach((d) => {
+  //   relevantDocs.push(d.pageContent);
+  // });
 
-  // Get relevant docs for each word in input
-  if (relevantDocs.length < _MIN_RELEVANT_DOCS) {
-    const words = trimmedInput.split(" ");
-    const firstThreeWords = words.slice(0, 3);
-    firstThreeWords.forEach(async (w) => {
-      const wordRelevantDocs = await _RETRIEVER.getRelevantDocuments(w);
-      console.log(
-        `Found ${wordRelevantDocs.length} relevant docs for word: ${w}`
-      );
-      wordRelevantDocs.forEach((d) => {
-        if (d.pageContent == "") throw new Error("Page content is empty");
-        relevantDocs.push(d.pageContent);
-      });
-    });
-  }
+  // // Get relevant docs for each word in input
+  // if (relevantDocs.length < _MIN_RELEVANT_DOCS) {
+  //   const words = trimmedInput.split(" ");
+  //   const firstThreeWords = words.slice(0, 3);
+  //   firstThreeWords.forEach(async (w) => {
+  //     const wordRelevantDocs = await _RETRIEVER.getRelevantDocuments(w);
+  //     console.log(
+  //       `Found ${wordRelevantDocs.length} relevant docs for word: ${w}`
+  //     );
+  //     wordRelevantDocs.forEach((d) => {
+  //       if (d.pageContent == "") throw new Error("Page content is empty");
+  //       relevantDocs.push(d.pageContent);
+  //     });
+  //   });
+  // }
 
-  // Use supabase text search to get similar docs
-  if (relevantDocs.length < _MIN_RELEVANT_DOCS) {
-    const similarDocs = await _SUPABASE_CLIENT
-      .from("documents")
-      .select()
-      .textSearch("content", trimmedInput, {
-        type: "websearch",
-        config: "english",
-      });
-    console.log(
-      `Found ${
-        similarDocs.data?.length || 0
-      } similar docs using supabase text search`
-    );
-    if (similarDocs.error) throw similarDocs.error;
-    if (!similarDocs.data) throw new Error("No data returned from supabase");
-    similarDocs.data.forEach((d) => {
-      const { content, id, metadata, embedding } = d;
-      if (content == "") throw new Error("Content is empty");
-      relevantDocs.push(content);
-    });
-  }
+  // // Use supabase text search to get similar docs
+  // if (relevantDocs.length < _MIN_RELEVANT_DOCS) {
+  //   const similarDocs = await _SUPABASE_CLIENT
+  //     .from("documents")
+  //     .select()
+  //     .textSearch("content", trimmedInput, {
+  //       type: "websearch",
+  //       config: "english",
+  //     });
+  //   console.log(
+  //     `Found ${
+  //       similarDocs.data?.length || 0
+  //     } similar docs using supabase text search`
+  //   );
+  //   if (similarDocs.error) throw similarDocs.error;
+  //   if (!similarDocs.data) throw new Error("No data returned from supabase");
+  //   similarDocs.data.forEach((d) => {
+  //     const { content, id, metadata, embedding } = d;
+  //     if (content == "") throw new Error("Content is empty");
+  //     relevantDocs.push(content);
+  //   });
+  // }
 
-  // Remove duplicates
-  const relevantDocsSet = new Set(relevantDocs);
+  // // Remove duplicates
+  // const relevantDocsSet = new Set(relevantDocs);
 
-  return [...relevantDocsSet];
+  // return [...relevantDocsSet];
 };
 
 export const _getAllSupabaseDocs = async (table: string): Promise<string[]> => {
