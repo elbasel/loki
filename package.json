@@ -15,8 +15,6 @@
     "@types/node": "20.1.0",
     "@types/react": "18.2.5",
     "@types/react-dom": "18.2.4",
-    "@vercel/analytics": "^1.0.1",
-    "@vercel/kv": "^0.2.1",
     "autoprefixer": "10.4.14",
     "cheerio": "1.0.0-rc.12",
     "eslint": "8.40.0",
