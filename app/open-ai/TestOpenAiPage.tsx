@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { ChatWindow } from "@app/chat-window";
+import { ChatWindow } from "@app/UI/chat-window";
 import { type Message, getChatCompletion } from ".";
 
 //helper function

@@ -76,7 +76,7 @@ export const _getContextualAiResponse = async (
     input,
     relevantDocuments
   );
-
+  console.log({ relevantDocuments });
   return {
     aiResponse,
     relevantDocuments,
@@ -112,6 +112,8 @@ export const _getRelevantDocs = async (input: string): Promise<string[]> => {
   const relevantDocsSet: Set<string> = new Set();
   const relevantDocsPromiseList: Promise<void>[] = [];
   const trimmedInput = input.trim().replaceAll("\n", " ");
+  // !! delete later
+  // const allSupaBaseDocs = await _getAllSupabaseDocs();
   //get relevant docs for the input as a whole
   // !! TODO: only it's less than _USER_INPUT_LIMIT tokens....
   // const tokenizer = new GPT3Tokenizer({ type: "gpt3" });
@@ -120,6 +122,7 @@ export const _getRelevantDocs = async (input: string): Promise<string[]> => {
   // * otherwise...
   //
   // };
+  // this function ignores updates to documents, might be because of request caching
   const inputRelevantDocs = await _RETRIEVER.getRelevantDocuments(input);
   inputRelevantDocs.forEach((d) => {
     relevantDocsSet.add(d.pageContent);
@@ -142,6 +145,7 @@ export const _getRelevantDocs = async (input: string): Promise<string[]> => {
             const relevantDocuments = await _RETRIEVER.getRelevantDocuments(
               word
             );
+            console.log({ relevantDocuments });
             const firstDoc = relevantDocuments[0];
             if (firstDoc) relevantDocsSet.add(firstDoc.pageContent);
             resolve();
@@ -154,6 +158,7 @@ export const _getRelevantDocs = async (input: string): Promise<string[]> => {
     }
     await Promise.all(relevantDocsPromiseList);
   }
+  console.log({ relevantDocsPromiseList });
   const relevantDocsArray: string[] = [...relevantDocsSet];
   // if (relevantDocsArray.length === 0) {
   // }
@@ -161,7 +166,9 @@ export const _getRelevantDocs = async (input: string): Promise<string[]> => {
 };
 
 export const _getAllSupabaseDocs = async (): Promise<string[]> => {
-  const response = await _SUPABASE_CLIENT.from("documents").select();
-  if (response.error) throw response.error;
-  return response.data.map((d: any) => d.content);
+  const response = await _SUPABASE_CLIENT.from("documents").select("*");
+  console.log({ allSupabaseDocs: response });
+  return ["one", "two"];
+  // if (response.error) throw response.error;
+  // return response.data.map((d: any) => d.content);
 };

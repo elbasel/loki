@@ -41,7 +41,7 @@ export const TextArea: React.FC<TextAreaProps> = ({
       required={required}
       ref={inputRef}
       className={twMerge(
-        "w-full text-white bg-black py-2 px-4 rounded-lg resize-none app-scrollbar focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200",
+        "max-h-[30vh] w-full text-white bg-black py-2 px-4 rounded-lg resize-none app-scrollbar focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200",
         className
       )}
       onChange={handleInputChange}

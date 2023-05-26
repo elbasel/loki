@@ -88,11 +88,11 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
         const userPrompt = formData.get("user-prompt") as string;
         setUserPrompt(userPrompt);
       }}
-      className="overflow-y-auto"
+      className="overflow-y-auto flex flex-col max-h[100svh]"
     >
       <Output
         id="chat-window-output"
-        className="flex flex-col gap-2 mt-auto mb-4 overflow-y-auto scrollbar-thin"
+        className="max-h-[83vh] flex flex-col gap-2 mt-auto mb-4 overflow-y-auto scrollbar-thin"
       >
         {/* <AutoAnimate className="flex flex-col gap-2"> */}
         {messages.map((msg, i) => (
@@ -111,7 +111,6 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
           id="chat-window-text-area"
           name="user-prompt"
           className={twMerge(
-            "pr-11 max-h-64",
             formValidationEnabled && "invalid:!ring-2 invalid:!ring-red-700",
             loading && "opacity-50 cursor-not-allowed pointer-events-none"
           )}

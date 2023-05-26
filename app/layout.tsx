@@ -1,10 +1,10 @@
 "use client";
 import "./globals.css";
 import { Inter } from "next/font/google";
-import { Navbar } from "./navbar";
+import { Navbar } from "./UI/navbar";
 import { twMerge } from "tailwind-merge";
 import { useEffect, useState } from "react";
-import { Sidebar } from "./navbar/sidebar";
+import { Sidebar } from "./UI/navbar/sidebar";
 
 interface ViewableArea {
   width: number;
