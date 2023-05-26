@@ -56,7 +56,6 @@ const _getMostImportantKeywords = async (text: string): Promise<string[]> => {
   const keywords = aiResponse.split(", ");
   const isValidKeyWords = keywords.length > 0 && keywords.length <= 10;
   if (!isValidKeyWords) {
-    console.log({ keywords });
     throw new Error("Invalid keywords");
   }
 
