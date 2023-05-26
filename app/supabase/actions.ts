@@ -6,8 +6,9 @@ import { createClient } from "@supabase/supabase-js";
 // should be global, not scoped to supabase
 import { PromptGenerator, promptTemplates } from "./prompts";
 import { getRecursiveAiResponse } from ".";
-import { revalidateTag } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { getChatCompletionFromText } from "@app/open-ai";
+import { NextRequest } from "next/server";
 
 // !! import { revalidatePath } from "next/cache";
 
@@ -45,6 +46,16 @@ const _RETRIEVER = new SupabaseHybridSearch(_OPEN_AI_EMBEDDINGS, {
   client: _SUPABASE_CLIENT,
 });
 
+export async function POST(req: NextRequest) {
+  const requestUrl = req.nextUrl;
+  revalidatePath(requestUrl.pathname);
+}
+
+export async function GET(req: NextRequest) {
+  const requestUrl = req.nextUrl;
+  revalidatePath(requestUrl.pathname);
+}
+
 const _getMostImportantKeywords = async (text: string): Promise<string[]> => {
   const generatePrompt = PromptGenerator.new(
     promptTemplates.getMostImportantKeywords
@@ -69,8 +80,6 @@ export type _ContextualAiResponse = {
 export const _getContextualAiResponse = async (
   input: string
 ): Promise<_ContextualAiResponse> => {
-  revalidateTag("supabase");
-  revalidateTag("open-ai");
   const relevantDocuments = await _getRelevantDocs(input);
   const aiResponse: string = await getRecursiveAiResponse(
     input.trim().replaceAll("\n", " "),
@@ -108,10 +117,6 @@ const _insertDocument = async (
 };
 
 export const _getRelevantDocs = async (input: string): Promise<string[]> => {
-  revalidateTag("supabase");
-  revalidateTag("open-ai");
-  revalidateTag("/");
-  revalidateTag("*");
   const relevantDocs: string[] = [];
   const trimmedInput = input.trim().replaceAll("\n", " /n ");
 
