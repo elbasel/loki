@@ -24,7 +24,7 @@ export const _getRecursiveAiResponse = async (
   As an example:
   Provided Documents: 'elbasel is a dev. elbasel has short hair'
   user: who is elbasel?
-  ai; elbasel is a developer with short hair, Anything else you would like to know? (response should be friendly, natrual sounding, similar to jarvis from ironman).
+  ai; elbasel is a developer with short hair, Please tell me if I can do anything else to help :) (response should be friendly, natrual sounding, similar to jarvis from ironman).
   The following is the actual provided documents that should be used to assist the user: '${contextArray.join(
     ". "
   )}'.`,

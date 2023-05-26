@@ -73,10 +73,7 @@ export const _getContextualAiResponse = async (
 ): Promise<string[]> => {
   console.log('Getting contextual ai response for input: "' + input + '"');
   console.log(`Calling _getRelevantDocs(input) with input: "${input}"`);
-  const relevantDocuments = await _getRelevantDocs(`
- Time of users's query: ${new Date().toLocaleString("en-US")}
-  User's query: ${input} 
-  `);
+  const relevantDocuments = await _getRelevantDocs(input);
   console.log(`Got ${relevantDocuments.length} relevant docs`);
   console.log(`Calling getRecursiveAiResponse(input, relevantDocuments)`);
   const aiResponse: string = await getRecursiveAiResponse(
@@ -122,11 +119,11 @@ export const _getRelevantDocs = async (input: string): Promise<string[]> => {
   });
   const _RETRIEVER = new SupabaseHybridSearch(_OPEN_AI_EMBEDDINGS, {
     client: _SUPABASE_CLIENT,
-    similarityK: Math.random() * 0.5 + 0.5,
+    similarityK: Math.trunc(Math.random() * 10),
   });
 
   const relevantDocs: string[] = [];
-  const trimmedInput = input.trim().replaceAll("\n", " /n ");
+  const trimmedInput = input.trim().replaceAll("\n", ". ");
   // Use supabase hybrid search to get relevant docs
   const inputRelevantDocs = await _RETRIEVER.getRelevantDocuments(trimmedInput);
   console.log(
@@ -156,12 +153,9 @@ export const _getRelevantDocs = async (input: string): Promise<string[]> => {
   if (relevantDocs.length < _MIN_RELEVANT_DOCS) {
     const similarDocs = await _SUPABASE_CLIENT
       .from("documents")
-      .select("*", {
-        head: true,
-      })
+      .select("*")
       .textSearch("content", trimmedInput, {
-        type: "plain",
-        config: "english",
+        type: "websearch",
       });
     console.log(
       `Found ${
@@ -169,8 +163,8 @@ export const _getRelevantDocs = async (input: string): Promise<string[]> => {
       } similar docs using supabase text search`
     );
     if (similarDocs.error) throw similarDocs.error;
-    if (!similarDocs.data) throw new Error("No data returned from supabase");
-    similarDocs.data.forEach((d) => {
+    // if (!similarDocs.data) throw new Error("No data returned from supabase");
+    similarDocs.data?.forEach((d) => {
       const { content, id, metadata, embedding } = d;
       if (content == "") throw new Error("Content is empty");
       relevantDocs.push(content);
@@ -184,7 +178,7 @@ export const _getRelevantDocs = async (input: string): Promise<string[]> => {
   console.log('testing all suapbase docs: "' + allSupabaseDocs + '"');
 
   return [
-    "Now date and time: " + new Date().toLocaleString("en-US"),
+    // "Now date and time: " + new Date().toLocaleString("en-US"),
     ...relevantDocsSet,
   ];
 };
