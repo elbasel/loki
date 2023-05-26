@@ -73,9 +73,10 @@ export const _getContextualAiResponse = async (
 ): Promise<string[]> => {
   console.log('Getting contextual ai response for input: "' + input + '"');
   console.log(`Calling _getRelevantDocs(input) with input: "${input}"`);
-  const relevantDocuments = await _getRelevantDocs(
-    new Date().toLocaleDateString("en-US") + input
-  );
+  const relevantDocuments = await _getRelevantDocs(`
+ Time of users's query: ${new Date().toLocaleString("en-US")}
+  User's query: ${input} 
+  `);
   console.log(`Got ${relevantDocuments.length} relevant docs`);
   console.log(`Calling getRecursiveAiResponse(input, relevantDocuments)`);
   const aiResponse: string = await getRecursiveAiResponse(
