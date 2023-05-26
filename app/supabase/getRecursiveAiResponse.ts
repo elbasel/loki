@@ -12,6 +12,9 @@ export const _getRecursiveAiResponse = async (
   contextArray: string[],
   currentDepth = 0
 ): Promise<string> => {
+  console.log("Getting ai response for the following parameters");
+  console.log({ query, contextArray, currentDepth });
+
   const messages: Message[] = [];
 
   messages.push({
@@ -32,8 +35,9 @@ export const _getRecursiveAiResponse = async (
     author: "human",
     text: query,
   });
-  
+
   const aiResponse = await getChatCompletion(messages);
 
+  console.log("Got ai response: ", aiResponse);
   return aiResponse.text;
 };

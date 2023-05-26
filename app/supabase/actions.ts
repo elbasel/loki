@@ -71,12 +71,16 @@ const _getMostImportantKeywords = async (text: string): Promise<string[]> => {
 export const _getContextualAiResponse = async (
   input: string
 ): Promise<string[]> => {
+  console.log('Getting contextual ai response for input: "' + input + '"');
+  console.log(`Calling _getRelevantDocs(input) with input: "${input}"`);
   const relevantDocuments = await _getRelevantDocs(input);
+  console.log(`Got ${relevantDocuments.length} relevant docs`);
+  console.log(`Calling getRecursiveAiResponse(input, relevantDocuments)`);
   const aiResponse: string = await getRecursiveAiResponse(
     input.trim().replaceAll("\n", " "),
     relevantDocuments
   );
-
+  console.log(`Got aiResponse: "${aiResponse}"`);
   return [aiResponse, ...relevantDocuments];
 };
 
@@ -173,13 +177,11 @@ export const _getRelevantDocs = async (input: string): Promise<string[]> => {
   // Remove duplicates
   const relevantDocsSet = new Set(relevantDocs);
 
+  const allSupabaseDocs = await _getAllSupabaseDocs("documents");
+  console.log('testing all suapbase docs: "' + allSupabaseDocs + '"');
+
   return [
-    "Now date and time: " +
-      new Date().toString() +
-      "TimeZoneOffset" +
-      new Date().getTimezoneOffset(),
-    "A random id assigned to these provided documents: " +
-      Math.random().toString(),
+    "Now date and time: " + new Date().toLocaleString("en-US"),
     ...relevantDocsSet,
   ];
 };
