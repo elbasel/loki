@@ -122,6 +122,7 @@ export const _getRelevantDocs = async (input: string): Promise<string[]> => {
   });
   const _RETRIEVER = new SupabaseHybridSearch(_OPEN_AI_EMBEDDINGS, {
     client: _SUPABASE_CLIENT,
+    similarityK: Math.random() * 0.5 + 0.5,
   });
 
   const relevantDocs: string[] = [];
