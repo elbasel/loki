@@ -1,5 +1,4 @@
 "use server";
-
 // model
 import {
   AIChatMessage,
@@ -9,6 +8,9 @@ import {
 } from "langchain/schema";
 // web scraper
 import { CheerioWebBaseLoader } from "langchain/document_loaders/web/cheerio";
+import { PlaywrightWebBaseLoader } from "langchain/document_loaders/web/playwright";
+import { PuppeteerWebBaseLoader } from "langchain/document_loaders/web/puppeteer";
+
 import * as cheerio from "cheerio";
 import { _CHAT_OPEN_AI } from "./lib/globals";
 
@@ -54,15 +56,18 @@ type _CheerioDoc = {
 };
 export const _loadUrl = async (url: string): Promise<_UrlInfo[]> => {
   const urlInfo: _UrlInfo[] = [];
-  // const loader = new CheerioWebBaseLoader(url);
-  // const cheerioDocs: _CheerioDoc[] = await loader.load();
-  // cheerioDocs.forEach((d) => {
-  //   urlInfo.push({
-  //     url,
-  //     title: _getPageTitle(d.pageContent),
-  //     html: d.pageContent,
-  //   });
-  // });
+  const loader = new PuppeteerWebBaseLoader(url);
+
+  const docs = await loader.load();
+
+  docs.forEach((d) => {
+    const { metadata, pageContent } = d;
+    urlInfo.push({
+      url,
+      title: "N/A",
+      html: pageContent,
+    });
+  });
 
   return urlInfo;
 };
