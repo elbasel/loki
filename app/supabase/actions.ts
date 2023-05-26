@@ -108,6 +108,10 @@ const _insertDocument = async (
 };
 
 export const _getRelevantDocs = async (input: string): Promise<string[]> => {
+  revalidateTag("supabase");
+  revalidateTag("open-ai");
+  revalidateTag("/");
+  revalidateTag("*");
   const relevantDocs: string[] = [];
   const trimmedInput = input.trim().replaceAll("\n", " /n ");
 
