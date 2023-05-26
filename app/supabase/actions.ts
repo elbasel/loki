@@ -18,7 +18,14 @@ const _SUPABASE_REQUEST_INTERVAL = 1500; // 1.5s
 const _SUPABASE_REQUEST_LIMIT = 10; // limit supabase request i to 10 requests for every user sumbit
 const _SUPABASE_CLIENT = createClient(
   process.env.SUPABASE_URL || "",
-  process.env.SUPABASE_PRIVATE_KEY || ""
+  process.env.SUPABASE_PRIVATE_KEY || "",
+  {
+    realtime: {
+      headers: {
+        "Cache-Control": "no-cache",
+      },
+    },
+  }
 );
 
 const _MIN_RELEVANT_DOCS = 3;
