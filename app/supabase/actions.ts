@@ -156,9 +156,11 @@ export const _getRelevantDocs = async (input: string): Promise<string[]> => {
   if (relevantDocs.length < _MIN_RELEVANT_DOCS) {
     const similarDocs = await _SUPABASE_CLIENT
       .from("documents")
-      .select()
+      .select("*", {
+        head: true,
+      })
       .textSearch("content", trimmedInput, {
-        type: "websearch",
+        type: "plain",
         config: "english",
       });
     console.log(
